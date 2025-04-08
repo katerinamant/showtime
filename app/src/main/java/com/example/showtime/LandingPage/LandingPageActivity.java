@@ -2,8 +2,13 @@ package com.example.showtime.LandingPage;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Button;
+import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
 
+import com.example.showtime.ChatPage.ChatPageActivity;
 import com.example.showtime.R;
 
 public class LandingPageActivity extends AppCompatActivity {
@@ -12,5 +17,37 @@ public class LandingPageActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_landing_page);
+
+        EditText landing_page_edit_txt = findViewById(R.id.landing_edit_txt);
+        landing_page_edit_txt.setOnEditorActionListener((textView, i, keyEvent) -> {
+            if (i == EditorInfo.IME_ACTION_NEXT) {
+                Intent intent = new Intent(LandingPageActivity.this, ChatPageActivity.class);
+
+                // Add user input to intent
+                String user_input = landing_page_edit_txt.getText().toString().trim();
+                intent.putExtra("user_input", user_input);
+                startActivity(intent);
+                return true;
+            }
+            return false;
+        });
+
+        // Set up prompt button intents
+        Button[] buttons = new Button[] {
+                findViewById(R.id.btn_prompt_1),
+                findViewById(R.id.btn_prompt_2),
+                findViewById(R.id.btn_prompt_3),
+                findViewById(R.id.btn_prompt_4)
+        };
+
+        for (Button btn : buttons) {
+            btn.setOnClickListener(v -> {
+                Intent intent = new Intent(LandingPageActivity.this, ChatPageActivity.class);
+                String user_input = btn.getText().toString();
+                intent.putExtra("user_input", user_input);
+                startActivity(intent);
+            });
+        }
+
     }
 }
