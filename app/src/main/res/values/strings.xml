@@ -3,15 +3,18 @@
 
     <!-- Misc -->
     <string name="ok">OK</string>
-    <string name="confirm">Confirm</string>
-    <string name="cancel">Cancel</string>
+    <string name="hint">Ask me anything!</string>
 
     <!-- Landing Page -->
     <string name="booth_img_desc">Ticket booth with ShowTime logo</string>
     <string name="how_can_i_help_you">How can I help you?</string>
-    <string name="prompt_hint">Ask me anything!</string>
     <string name="prompt_1">What can you do?</string>
     <string name="prompt_2">What are the available shows?</string>
     <string name="prompt_3">I need help with my reservation</string>
     <string name="prompt_4">How much does a ticket cost?</string>
+
+    <!-- Chat Page -->
+    <string name="logo_desc">ShowTime logo</string>
+    <string name="help_desc">Help Page</string>
+    <string name="sent_desc">Send message</string>
 </resources>
