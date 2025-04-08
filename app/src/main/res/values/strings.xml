@@ -13,8 +13,15 @@
     <string name="prompt_3">I need help with my reservation</string>
     <string name="prompt_4">How much does a ticket cost?</string>
 
-    <!-- Chat Page -->
+    <!-- Header -->
     <string name="logo_desc">ShowTime logo</string>
     <string name="help_desc">Help Page</string>
+
+    <!-- Chat Page -->
     <string name="sent_desc">Send message</string>
+
+    <!-- Help Page -->
+    <string name="call_center_title">Call Center</string>
+    <string name="call_center_number">210-0000000</string>
+    <string name="more_help">If you need further help with an active conversation, please ask UsherBot for a support expert.</string>
 </resources>
