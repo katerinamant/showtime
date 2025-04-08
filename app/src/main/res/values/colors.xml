@@ -2,4 +2,17 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <!-- Palette -->
+    <color name="violet">#8B687F</color>
+    <color name="peach_yellow">#FCE09D</color>
+    <color name="coral">#F78154</color>
+    <color name="air_blue">#7EA8BE</color>
+    <color name="lapis_lazuli">#2D5D7B</color>
+
+    <!-- Misc -->
+    <color name="hint">#A6A6A6</color>
+
+    <!-- Rating -->
+    <color name="ratings_bar">#F9D978</color>
 </resources>
