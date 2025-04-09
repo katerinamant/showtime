@@ -21,7 +21,7 @@
     <!-- Chat Page -->
     <string name="sent_desc">Send message</string>
 
-    <!-- Ticket banner -->
+    <!-- Banners -->
     <string name="res_code">Reservation Code</string>
     <string name="date">Date</string>
     <string name="time">Time</string>
