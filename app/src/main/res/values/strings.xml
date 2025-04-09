@@ -38,8 +38,12 @@
     <string name="faq">FAQ</string>
     <string name="faq_1">1. Booking &amp; Confirmation</string>
     <string name="faq_2">2. Pricing &amp; Payment</string>
-    <string name="faq_3">3. Manage My Reservation</string>
+    <string name="faq_3">3. Managing My Reservation</string>
     <string name="faq_4">4. Show Information</string>
     <string name="faq_5">5. Troubleshooting &amp; Support</string>
     <string name="copyright">© 2025 ShowTime. Icons by <a href="https://icons8.com/">Icons8</a></string>
+
+    <!-- FAQ Page -->
+    <string name="faq_question">Question?</string>
+    <string name="faq_answer">Answer.</string>
 </resources>

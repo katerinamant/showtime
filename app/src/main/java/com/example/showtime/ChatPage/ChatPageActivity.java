@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import com.example.showtime.HelpPage.HelpPageActivity;
 import com.example.showtime.LandingPage.LandingPageActivity;
 import com.example.showtime.R;
+import com.example.showtime.Utils.Utils;
 
 public class ChatPageActivity extends AppCompatActivity {
     String user_input;
@@ -35,10 +36,10 @@ public class ChatPageActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
-        // Get user_input from LandingPageActivity
+        // Get user input from LandingPageActivity
         if (savedInstanceState == null) {
             Intent intent = getIntent();
-            user_input = intent.getStringExtra("user_input");
+            user_input = intent.getStringExtra(Utils.USER_INPUT);
         }
 
         EditText chat_input = findViewById(R.id.chat_input);

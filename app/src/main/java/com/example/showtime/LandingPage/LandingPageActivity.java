@@ -10,6 +10,7 @@ import android.widget.EditText;
 
 import com.example.showtime.ChatPage.ChatPageActivity;
 import com.example.showtime.R;
+import com.example.showtime.Utils.Utils;
 
 public class LandingPageActivity extends AppCompatActivity {
 
@@ -44,10 +45,9 @@ public class LandingPageActivity extends AppCompatActivity {
             btn.setOnClickListener(v -> {
                 Intent intent = new Intent(LandingPageActivity.this, ChatPageActivity.class);
                 String user_input = btn.getText().toString();
-                intent.putExtra("user_input", user_input);
+                intent.putExtra(Utils.USER_INPUT, user_input);
                 startActivity(intent);
             });
         }
-
     }
 }
