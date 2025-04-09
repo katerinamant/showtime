@@ -21,6 +21,16 @@
     <!-- Chat Page -->
     <string name="sent_desc">Send message</string>
 
+    <!-- Ticket banner -->
+    <string name="res_code">Reservation Code</string>
+    <string name="date">Date</string>
+    <string name="time">Time</string>
+    <string name="show">Show Name</string>
+    <string name="res_name">Reservation Name</string>
+    <string name="amount_title">Outstanding amount:</string>
+    <string name="amount">amount</string>
+    <string name="euro_symbol">€</string>
+
     <!-- Help Page -->
     <string name="call_center_title">Call Center</string>
     <string name="call_center_number">210-0000000</string>
