@@ -74,10 +74,12 @@
         <!-- Call center box -->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/call_center_box"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="25dp"
-            android:background="@drawable/text_view_rounded_with_color"
+            android:background="@drawable/box_rounded_air_blue"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
@@ -118,7 +120,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
-            android:background="@drawable/text_view_rounded_with_color"
+            android:background="@drawable/box_rounded_air_blue"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/call_center_box">
@@ -127,10 +131,8 @@
                 android:id="@+id/more_help"
                 android:layout_width="275dp"
                 android:layout_height="70dp"
-                android:layout_marginStart="30dp"
-                android:layout_marginTop="30dp"
-                android:layout_marginEnd="30dp"
-                android:layout_marginBottom="30dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp"
                 android:fontFamily="@font/inter_medium"
                 android:text="@string/more_help"
                 android:textAlignment="center"

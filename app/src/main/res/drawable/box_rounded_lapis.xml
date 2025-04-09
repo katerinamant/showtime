@@ -10,20 +10,12 @@
                 android:topRightRadius="10dp" />
         </shape>
     </item>
-    <item
-        android:top="8dp"
-        android:bottom="8dp"
-        android:left="8dp"
-        android:right="8dp">
+    <item>
         <shape android:shape="rectangle">
             <stroke
                 android:width="1dp"
-                android:color="@color/air_blue" />
-            <corners
-                android:bottomRightRadius="10dp"
-                android:bottomLeftRadius="10dp"
-                android:topLeftRadius="10dp"
-                android:topRightRadius="10dp" />
+                android:color="@color/lapis_lazuli" />
+            <corners android:radius="10dp" />
         </shape>
     </item>
 </layer-list>
