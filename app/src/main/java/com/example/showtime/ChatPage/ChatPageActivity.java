@@ -2,6 +2,7 @@ package com.example.showtime.ChatPage;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.method.ScrollingMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,9 +30,12 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 public class ChatPageActivity extends AppCompatActivity {
     private ChatPageViewModel viewModel;
+    private RecyclerView recyclerView;
+    private ChatRecyclerViewAdapter recyclerViewAdapter;
     String userInput;
     UserMessage userMessage;
     BotMessage botMessage;
+    ImageView sendBtn;
     final PopupWindow[] clearChatPopup = {null};
 
     @Override
@@ -39,7 +43,7 @@ public class ChatPageActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat_page);
 
-        RelativeLayout relativeLayout = findViewById(R.id.relative_chat_page);
+        sendBtn = findViewById(R.id.send_button);
 
         // Get user input from LandingPageActivity
         if (savedInstanceState == null) {
@@ -49,6 +53,66 @@ public class ChatPageActivity extends AppCompatActivity {
 
         viewModel = new ViewModelProvider(this).get(ChatPageViewModel.class);
 
+        setUpHeaderButtons();
+
+        setUpRecyclerView();
+
+        // Set up chat input functionality
+        // Enable scrolling in the chat input box
+        EditText chatInput = findViewById(R.id.chat_input);
+        chatInput.setMovementMethod(new ScrollingMovementMethod());
+        chatInput.setVerticalScrollBarEnabled(true);
+        chatInput.setMaxLines(3); // Max lines to have before enabling scrolling
+        chatInput.setScrollBarStyle(View.SCROLLBARS_INSIDE_INSET);
+
+        // Send user message on click on "send" icon
+        toggleSendButton(true);
+        sendBtn.setOnClickListener(v -> {
+            if (chatInput.getText().toString().isEmpty()) return;
+
+            // Create userMessage object
+            userInput = chatInput.getText().toString().trim();
+            userMessage = viewModel.getPresenter().getNewUserMessage(userInput);
+
+            // Add new object to RecyclerView, scroll to bottom and clear input text
+            recyclerViewAdapter.addItem(userMessage);
+            recyclerView.scrollToPosition(recyclerViewAdapter.getItemCount() - 1);
+            chatInput.setText("");
+
+            waitForBotMsg();
+        });
+
+        setUpClearChatButton();
+    }
+
+    void toggleSendButton(boolean state) {
+        sendBtn.setEnabled(state);
+        sendBtn.setClickable(state);
+        sendBtn.setAlpha(0.5f + 0.5f * (state ? 1 : 0));
+    }
+
+    void waitForBotMsg() {
+        // Disable send button
+        toggleSendButton(false);
+
+        // Create botMessage object
+        // TODO Get actual bot message
+        botMessage = viewModel.getPresenter().getNewBotMessage("Yes.");
+
+        // Add new object to RecyclerView and scroll to bottom
+        recyclerViewAdapter.addItem(botMessage);
+        recyclerView.scrollToPosition(recyclerViewAdapter.getItemCount() - 1);
+
+        // TODO Delay based on text's length (if actual delay is not enough)
+        new Handler().postDelayed(() -> {
+            // Delay 5 seconds and enable send button
+            sendBtn.setEnabled(true);
+            sendBtn.setClickable(true);
+            sendBtn.setAlpha(1f);
+        }, 5000);
+    }
+
+    void setUpHeaderButtons() {
         // Logo button
         ImageView headerLogo = findViewById(R.id.header_logo);
         headerLogo.setOnClickListener(view -> {
@@ -64,41 +128,26 @@ public class ChatPageActivity extends AppCompatActivity {
             Intent intent = new Intent(ChatPageActivity.this, HelpPageActivity.class);
             startActivity(intent);
         });
+    }
 
-        // Set up RecyclerView
-        RecyclerView recyclerView = findViewById(R.id.chat_page_recycler_view);
+    void setUpRecyclerView() {
+        recyclerView = findViewById(R.id.chat_page_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        ChatRecyclerViewAdapter adapter = new ChatRecyclerViewAdapter(this);
-        recyclerView.setAdapter(adapter);
+        recyclerViewAdapter = new ChatRecyclerViewAdapter(this);
+        recyclerView.setAdapter(recyclerViewAdapter);
 
-        // Add user's first message
+        // Add user's first message from the LandingPage
         userMessage = viewModel.getPresenter().getNewUserMessage(userInput);
-        adapter.addItem(userMessage);
+        recyclerViewAdapter.addItem(userMessage);
 
-        // Set up chat input functionality
-        // Enable scrolling in the chat input box
-        EditText chatInput = findViewById(R.id.chat_input);
-        chatInput.setMovementMethod(new ScrollingMovementMethod());
-        chatInput.setVerticalScrollBarEnabled(true);
-        chatInput.setMaxLines(3); // Max lines to have before enabling scrolling
-        chatInput.setScrollBarStyle(View.SCROLLBARS_INSIDE_INSET);
+        waitForBotMsg();
+    }
 
-        // Send user message on click on "send" icon
-        ImageView sendBtn = findViewById(R.id.send_button);
-        sendBtn.setOnClickListener(v -> {
-            userInput = chatInput.getText().toString().trim();
-            userMessage = viewModel.getPresenter().getNewUserMessage(userInput);
-            adapter.addItem(userMessage);
-            recyclerView.scrollToPosition(adapter.getItemCount() - 1);
-            chatInput.setText("");
-
-            // TODO Disable send option after sending the message (to wait for bot response)
-        });
-
+    void setUpClearChatButton() {
         // Show popup when clear chat button is clicked
         ImageView clearChatBtn = findViewById(R.id.clear_chat_button);
         clearChatBtn.setOnClickListener(v -> {
-            if (adapter.getItemCount() == 0) return;
+            if (recyclerViewAdapter.getItemCount() == 0) return;
 
             // Inflate the custom layout
             LayoutInflater inflater = LayoutInflater.from(this);
@@ -117,7 +166,7 @@ public class ChatPageActivity extends AppCompatActivity {
             cancelButton.setOnClickListener(cancel -> dialog.dismiss());
 
             confirmButton.setOnClickListener(confirm -> {
-                adapter.clearChat();
+                recyclerViewAdapter.clearChat();
                 dialog.dismiss();
             });
 

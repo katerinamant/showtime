@@ -7,15 +7,6 @@
     android:background="@android:color/white"
     tools:context=".ChatPage.ChatPageActivity">
 
-    <RelativeLayout
-        android:id="@+id/relative_chat_page"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"></RelativeLayout>
-
     <!-- Header background container -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/header_container"
