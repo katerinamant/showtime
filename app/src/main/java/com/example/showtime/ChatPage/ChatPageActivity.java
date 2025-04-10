@@ -4,9 +4,13 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
+import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -18,12 +22,23 @@ import com.example.showtime.R;
 import com.example.showtime.Utils.Utils;
 
 public class ChatPageActivity extends AppCompatActivity {
+    private ChatPageViewModel viewModel;
     String user_input;
+    UserMessage userMessage;
+    BotMessage botMessage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat_page);
+
+        // Get user input from LandingPageActivity
+        if (savedInstanceState == null) {
+            Intent intent = getIntent();
+            user_input = intent.getStringExtra(Utils.USER_INPUT);
+        }
+
+        viewModel = new ViewModelProvider(this).get(ChatPageViewModel.class);
 
         // Logo button
         ImageView headerLogo = findViewById(R.id.header_logo);
@@ -41,12 +56,6 @@ public class ChatPageActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
-        // Get user input from LandingPageActivity
-        if (savedInstanceState == null) {
-            Intent intent = getIntent();
-            user_input = intent.getStringExtra(Utils.USER_INPUT);
-        }
-
         // Set up RecyclerView
         RecyclerView recyclerView = findViewById(R.id.chat_page_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -54,6 +63,27 @@ public class ChatPageActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
 
         // Add user's first message
-        adapter.addItem(new UserMessage(user_input));
+        userMessage = viewModel.getPresenter().getNewUserMessage(user_input);
+        adapter.addItem(userMessage);
+
+        // Set up chat input functionality
+        // Enable scrolling in the chat input box
+        EditText chatInput = findViewById(R.id.chat_input);
+        chatInput.setMovementMethod(new ScrollingMovementMethod());
+        chatInput.setVerticalScrollBarEnabled(true);
+        chatInput.setMaxLines(3); // Max lines to have before enabling scrolling
+        chatInput.setScrollBarStyle(View.SCROLLBARS_INSIDE_INSET);
+
+        // Send user message on click on "send" icon
+        ImageView send_icon = findViewById(R.id.send_button);
+        send_icon.setOnClickListener(v -> {
+            user_input = chatInput.getText().toString().trim();
+            userMessage = viewModel.getPresenter().getNewUserMessage(user_input);
+            adapter.addItem(userMessage);
+            recyclerView.scrollToPosition(adapter.getItemCount() - 1);
+            chatInput.setText("");
+
+            // TODO Disable send option after sending the message (to wait for bot response)
+        });
     }
 }
