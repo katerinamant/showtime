@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageView;
 
@@ -23,7 +22,7 @@ import com.example.showtime.Utils.Utils;
 
 public class ChatPageActivity extends AppCompatActivity {
     private ChatPageViewModel viewModel;
-    String user_input;
+    String userInput;
     UserMessage userMessage;
     BotMessage botMessage;
 
@@ -35,7 +34,7 @@ public class ChatPageActivity extends AppCompatActivity {
         // Get user input from LandingPageActivity
         if (savedInstanceState == null) {
             Intent intent = getIntent();
-            user_input = intent.getStringExtra(Utils.USER_INPUT);
+            userInput = intent.getStringExtra(Utils.USER_INPUT);
         }
 
         viewModel = new ViewModelProvider(this).get(ChatPageViewModel.class);
@@ -63,7 +62,7 @@ public class ChatPageActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
 
         // Add user's first message
-        userMessage = viewModel.getPresenter().getNewUserMessage(user_input);
+        userMessage = viewModel.getPresenter().getNewUserMessage(userInput);
         adapter.addItem(userMessage);
 
         // Set up chat input functionality
@@ -75,15 +74,23 @@ public class ChatPageActivity extends AppCompatActivity {
         chatInput.setScrollBarStyle(View.SCROLLBARS_INSIDE_INSET);
 
         // Send user message on click on "send" icon
-        ImageView send_icon = findViewById(R.id.send_button);
-        send_icon.setOnClickListener(v -> {
-            user_input = chatInput.getText().toString().trim();
-            userMessage = viewModel.getPresenter().getNewUserMessage(user_input);
+        ImageView sendBtn = findViewById(R.id.send_button);
+        sendBtn.setOnClickListener(v -> {
+            userInput = chatInput.getText().toString().trim();
+            userMessage = viewModel.getPresenter().getNewUserMessage(userInput);
             adapter.addItem(userMessage);
             recyclerView.scrollToPosition(adapter.getItemCount() - 1);
             chatInput.setText("");
 
             // TODO Disable send option after sending the message (to wait for bot response)
+        });
+
+        // Clear chat button
+        ImageView clearChatBtn = findViewById(R.id.clear_chat_button);
+        clearChatBtn.setOnClickListener(v -> {
+            adapter.clearChat();
+
+            // TODO Add popup confirmation
         });
     }
 }

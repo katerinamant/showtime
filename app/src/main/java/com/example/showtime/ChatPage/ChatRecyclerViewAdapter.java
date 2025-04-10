@@ -75,6 +75,12 @@ public class ChatRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
         notifyItemInserted(chatItems.size() - 1);
     }
 
+    // Clear messages list
+    public void clearChat() {
+        chatItems.clear();
+        notifyDataSetChanged();
+    }
+
     // --- ViewHolder classes ---
 
     static class UserViewHolder extends RecyclerView.ViewHolder {
