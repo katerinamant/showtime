@@ -1,15 +1,14 @@
 package com.example.showtime.FaqPage;
 
+import android.content.Intent;
+import android.os.Bundle;
+import android.widget.ImageView;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.Intent;
-import android.os.Bundle;
-import android.widget.ImageView;
-
-import com.example.showtime.ChatPage.ChatPageActivity;
 import com.example.showtime.HelpPage.HelpPageActivity;
 import com.example.showtime.LandingPage.LandingPageActivity;
 import com.example.showtime.R;

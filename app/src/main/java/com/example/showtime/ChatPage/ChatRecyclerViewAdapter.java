@@ -10,9 +10,9 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.showtime.ChatItem.BotMessage;
+import com.example.showtime.ChatItem.ChatItem;
 import com.example.showtime.ChatItem.UserMessage;
 import com.example.showtime.R;
-import com.example.showtime.ChatItem.ChatItem;
 
 import java.util.ArrayList;
 import java.util.List;

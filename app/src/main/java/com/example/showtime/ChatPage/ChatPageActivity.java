@@ -1,13 +1,8 @@
 package com.example.showtime.ChatPage;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
-import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,11 +10,11 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -31,8 +26,6 @@ import com.example.showtime.LandingPage.LandingPageActivity;
 import com.example.showtime.R;
 import com.example.showtime.Utils.Utils;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-
-import org.json.JSONException;
 
 public class ChatPageActivity extends AppCompatActivity {
     private ChatPageViewModel viewModel;

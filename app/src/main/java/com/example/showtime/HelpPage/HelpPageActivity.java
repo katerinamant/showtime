@@ -1,7 +1,5 @@
 package com.example.showtime.HelpPage;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.method.LinkMovementMethod;
@@ -9,7 +7,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.showtime.ChatPage.ChatPageActivity;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.showtime.FaqPage.FaqActivity;
 import com.example.showtime.LandingPage.LandingPageActivity;
 import com.example.showtime.R;
@@ -31,7 +30,7 @@ public class HelpPageActivity extends AppCompatActivity {
         });
 
         // Set up FAQ button intents
-        Button[] buttons = new Button[] {
+        Button[] buttons = new Button[]{
                 findViewById(R.id.btn_faq_1),
                 findViewById(R.id.btn_faq_2),
                 findViewById(R.id.btn_faq_3),
@@ -39,8 +38,8 @@ public class HelpPageActivity extends AppCompatActivity {
                 findViewById(R.id.btn_faq_5)
         };
 
-        for (int i=1; i<=buttons.length; i++) {
-            Button btn = buttons[i-1];
+        for (int i = 1; i <= buttons.length; i++) {
+            Button btn = buttons[i - 1];
 
             int finalI = i;
             btn.setOnClickListener(v -> {

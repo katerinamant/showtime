@@ -1,12 +1,12 @@
 package com.example.showtime.LandingPage;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Button;
 import android.view.inputmethod.EditorInfo;
+import android.widget.Button;
 import android.widget.EditText;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.showtime.ChatPage.ChatPageActivity;
 import com.example.showtime.R;
@@ -34,7 +34,7 @@ public class LandingPageActivity extends AppCompatActivity {
         });
 
         // Set up prompt button intents
-        Button[] buttons = new Button[] {
+        Button[] buttons = new Button[]{
                 findViewById(R.id.btn_prompt_1),
                 findViewById(R.id.btn_prompt_2),
                 findViewById(R.id.btn_prompt_3),

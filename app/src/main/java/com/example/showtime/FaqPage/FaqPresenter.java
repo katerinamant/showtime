@@ -49,7 +49,7 @@ public class FaqPresenter {
                 faq.setAnswer("Red seats are right upfront and cost 40€ each.\n\n" +
                         "Yellow seats are right behind them -these cost 30€.\n\n" +
                         "Blue seats are on the sides and are slightly elevated -these cost 25€ each.\n\n" +
-                        "Accessible seating is in a designated part of the red section and these cost 25€ each.\n\n"+
+                        "Accessible seating is in a designated part of the red section and these cost 25€ each.\n\n" +
                         "Feel free to ask UsherBot for more details and it will confirm the exact price when booking.");
                 res.add(faq);
 
@@ -114,7 +114,7 @@ public class FaqPresenter {
                 faq.setAnswer("Peter Pan:\n" +
                         "A lively, adventure-filled performance that runs about two hours and immerses audiences in the magic of Neverland. Playful storytelling, colorful costumes, and upbeat music make it an ideal pick for families with children aged 5 and up. " +
                         "Themes of imagination, friendship, and the joy of childhood shine through as Peter and his friends fend off pirates and discover what it means never to grow up.\n\n" +
-                        "Romeo and Juliet:\n"+
+                        "Romeo and Juliet:\n" +
                         "A faithful retelling of Shakespeare’s classic tragedy, this show spans roughly two and a half hours and appeals to teens and adults. Emotional performances, beautifully designed sets, and the timeless love story combine to explore themes of passion, " +
                         "family conflict, and fate. The production offers a poignant look at young love’s intensity—and the heartbreak that can follow when it’s tested by longstanding rivalries.");
                 res.add(faq);
