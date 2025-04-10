@@ -4,8 +4,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.method.LinkMovementMethod;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.example.showtime.ChatPage.ChatPageActivity;
 import com.example.showtime.FaqPage.FaqActivity;
@@ -47,5 +49,9 @@ public class HelpPageActivity extends AppCompatActivity {
                 startActivity(intent);
             });
         }
+
+        // Copyright footnote
+        TextView copyrightText = findViewById(R.id.copyright_text);
+        copyrightText.setMovementMethod(LinkMovementMethod.getInstance());
     }
 }
