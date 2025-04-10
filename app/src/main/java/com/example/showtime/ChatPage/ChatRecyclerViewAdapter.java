@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.showtime.ChatItem.BotMessage;
 import com.example.showtime.ChatItem.ChatItem;
+import com.example.showtime.ChatItem.TextMessage;
 import com.example.showtime.ChatItem.UserMessage;
 import com.example.showtime.R;
 
@@ -32,6 +33,7 @@ public class ChatRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
         ChatItem item = chatItems.get(position);
         if (item instanceof UserMessage) return ChatItem.TYPE_USER;
         if (item instanceof BotMessage) return ChatItem.TYPE_BOT;
+        if (item instanceof TextMessage) return ChatItem.TYPE_TEXT;
 
         return -1;
     }
@@ -48,6 +50,9 @@ public class ChatRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
         } else if (viewType == ChatItem.TYPE_BOT) {
             View view = inflater.inflate(R.layout.msg_bot, parent, false);
             return new BotViewHolder(view);
+        } else if (viewType == ChatItem.TYPE_TEXT) {
+            View view = inflater.inflate(R.layout.msg_text, parent, false);
+            return new TextViewHolder(view);
         }
 
         throw new IllegalArgumentException("Unknown viewType " + viewType);
@@ -61,6 +66,8 @@ public class ChatRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
             ((UserViewHolder) holder).bind((UserMessage) item);
         } else if (holder instanceof BotViewHolder) {
             ((BotViewHolder) holder).bind((BotMessage) item);
+        } else if (holder instanceof TextViewHolder) {
+            ((TextViewHolder) holder).bind((TextMessage) item);
         }
     }
 
@@ -73,6 +80,15 @@ public class ChatRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
     public void addItem(ChatItem item) {
         chatItems.add(item);
         notifyItemInserted(chatItems.size() - 1);
+    }
+
+    // Delete latest message
+    public void deleteLastItem() {
+        if (!chatItems.isEmpty()) {
+            int lastIndex = chatItems.size() - 1;
+            chatItems.remove(lastIndex);
+            notifyItemRemoved(lastIndex);
+        }
     }
 
     // Clear messages list
@@ -105,6 +121,19 @@ public class ChatRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
         }
 
         public void bind(BotMessage msg) {
+            textView.setText(msg.getMessage());
+        }
+    }
+
+    static class TextViewHolder extends RecyclerView.ViewHolder {
+        private final TextView textView;
+
+        public TextViewHolder(@NonNull View itemView) {
+            super(itemView);
+            textView = itemView.findViewById(R.id.msg_textview);
+        }
+
+        public void bind(TextMessage msg) {
             textView.setText(msg.getMessage());
         }
     }

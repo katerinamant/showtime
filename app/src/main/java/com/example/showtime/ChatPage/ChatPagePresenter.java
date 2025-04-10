@@ -1,6 +1,7 @@
 package com.example.showtime.ChatPage;
 
 import com.example.showtime.ChatItem.BotMessage;
+import com.example.showtime.ChatItem.TextMessage;
 import com.example.showtime.ChatItem.UserMessage;
 
 public class ChatPagePresenter {
@@ -10,5 +11,9 @@ public class ChatPagePresenter {
 
     public BotMessage getNewBotMessage(String msg) {
         return new BotMessage(msg);
+    }
+
+    public TextMessage getNewTextMessage(String msg) {
+        return new TextMessage(msg);
     }
 }

@@ -11,8 +11,6 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.PopupWindow;
-import android.widget.RelativeLayout;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,8 +18,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.showtime.ChatItem.BotMessage;
-import com.example.showtime.ChatItem.UserMessage;
+import com.example.showtime.ChatItem.ChatItem;
 import com.example.showtime.HelpPage.HelpPageActivity;
 import com.example.showtime.LandingPage.LandingPageActivity;
 import com.example.showtime.R;
@@ -33,10 +30,8 @@ public class ChatPageActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private ChatRecyclerViewAdapter recyclerViewAdapter;
     String userInput;
-    UserMessage userMessage;
-    BotMessage botMessage;
+    ChatItem userMessage, botMessage, textMessage;
     ImageView sendBtn;
-    final PopupWindow[] clearChatPopup = {null};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +61,6 @@ public class ChatPageActivity extends AppCompatActivity {
         chatInput.setScrollBarStyle(View.SCROLLBARS_INSIDE_INSET);
 
         // Send user message on click on "send" icon
-        toggleSendButton(true);
         sendBtn.setOnClickListener(v -> {
             if (chatInput.getText().toString().isEmpty()) return;
 
@@ -74,15 +68,20 @@ public class ChatPageActivity extends AppCompatActivity {
             userInput = chatInput.getText().toString().trim();
             userMessage = viewModel.getPresenter().getNewUserMessage(userInput);
 
-            // Add new object to RecyclerView, scroll to bottom and clear input text
-            recyclerViewAdapter.addItem(userMessage);
-            recyclerView.scrollToPosition(recyclerViewAdapter.getItemCount() - 1);
+            // Add new object to RecyclerView and clear input text
+            addToRecyclerView(userMessage);
             chatInput.setText("");
 
             waitForBotMsg();
         });
 
         setUpClearChatButton();
+    }
+
+    void addToRecyclerView(ChatItem item) {
+        // Add new object to RecyclerView and scroll to bottom
+        recyclerViewAdapter.addItem(item);
+        recyclerView.scrollToPosition(recyclerViewAdapter.getItemCount() - 1);
     }
 
     void toggleSendButton(boolean state) {
@@ -95,20 +94,25 @@ public class ChatPageActivity extends AppCompatActivity {
         // Disable send button
         toggleSendButton(false);
 
+        // Have a small delay before showing the "processing..." message
+        new Handler().postDelayed(() -> {
+            textMessage = viewModel.getPresenter().getNewTextMessage("processing...");
+            addToRecyclerView(textMessage);
+        }, 400);
+
         // Create botMessage object
         // TODO Get actual bot message
         botMessage = viewModel.getPresenter().getNewBotMessage("Yes.");
 
-        // Add new object to RecyclerView and scroll to bottom
-        recyclerViewAdapter.addItem(botMessage);
-        recyclerView.scrollToPosition(recyclerViewAdapter.getItemCount() - 1);
-
-        // TODO Delay based on text's length (if actual delay is not enough)
+        // Delay based on text's length, remove the "processing..." message and show the bot message
+        // TODO Delay based on text's length (if actual delay from retrieving the message is not enough)
         new Handler().postDelayed(() -> {
-            // Delay 5 seconds and enable send button
-            sendBtn.setEnabled(true);
-            sendBtn.setClickable(true);
-            sendBtn.setAlpha(1f);
+            recyclerViewAdapter.deleteLastItem();
+
+            addToRecyclerView(botMessage);
+
+            // Enable send button
+            toggleSendButton(true);
         }, 5000);
     }
 

@@ -24,6 +24,7 @@
         android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
         android:background="@drawable/box_rounded_air_blue"
+        android:fontFamily="@font/inter_regular"
         android:paddingStart="8dp"
         android:paddingTop="10dp"
         android:paddingEnd="8dp"
