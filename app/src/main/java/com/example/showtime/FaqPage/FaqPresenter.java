@@ -111,13 +111,20 @@ public class FaqPresenter {
 
                 faq = new Faq();
                 faq.setQuestion("What are the shows like?");
-                faq.setAnswer("\"Peter Pan\" is a lively, adventure-filled performance by an ensemble cast and it runs for about 2 hours. It is ideal for families with children aged 5 and up, thanks to its playful storytelling, colorful costumes, and energetic music.\n\n" +
-                        "\"Romeo and Juliet\" is a retelling of the classic Shakespearean drama performed by a talented ensemble. Its duration is about 2.5 hours. It's considered more suitable for teens and adults, given the romantic and dramatic themes. It offers emotional performances, beautifully designed sets, and a timeless love story.");
+                faq.setAnswer("Peter Pan:\n" +
+                        "A lively, adventure-filled performance that runs about two hours and immerses audiences in the magic of Neverland. Playful storytelling, colorful costumes, and upbeat music make it an ideal pick for families with children aged 5 and up. " +
+                        "Themes of imagination, friendship, and the joy of childhood shine through as Peter and his friends fend off pirates and discover what it means never to grow up.\n\n" +
+                        "Romeo and Juliet:\n"+
+                        "A faithful retelling of Shakespeare’s classic tragedy, this show spans roughly two and a half hours and appeals to teens and adults. Emotional performances, beautifully designed sets, and the timeless love story combine to explore themes of passion, " +
+                        "family conflict, and fate. The production offers a poignant look at young love’s intensity—and the heartbreak that can follow when it’s tested by longstanding rivalries.");
                 res.add(faq);
 
                 faq = new Faq();
-                faq.setQuestion("Who are the actors or performers?");
-                faq.setAnswer("When you ask about a specific show, UsherBot can give you a short list of the main cast or performers, if available. Just say \"Who is starring in Romeo and Juliet?\" or ask \"Tell me about the actors for Friday’s show.\"");
+                faq.setQuestion("Who are the directors and performers?");
+                faq.setAnswer("Peter Pan:\n" +
+                        "Directed by Mark Thompson, this magical production features Sam Brenner as Peter and Alexandra Liu as Wendy—both bringing playful energy to Neverland. Their lively performances and imaginative staging have made this show a favorite with families.\n\n" +
+                        "Romeo and Juliet\n" +
+                        "Eleni Papadopoulou directs this timeless Shakespeare classic with Dimitris Markos as Romeo and Maria Perakis as Juliet. They deliver a modern yet faithful interpretation, capturing the enduring romance and tragedy of Verona’s star-crossed lovers.");
                 res.add(faq);
                 break;
 
