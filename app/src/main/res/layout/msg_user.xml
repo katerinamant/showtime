@@ -18,7 +18,7 @@
         app:srcCompat="@drawable/icon_user" />
 
     <TextView
-        android:id="@+id/msg_bot_text"
+        android:id="@+id/msg_user_text"
         android:layout_width="240dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"

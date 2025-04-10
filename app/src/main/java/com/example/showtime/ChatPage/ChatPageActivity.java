@@ -7,6 +7,11 @@ import android.os.Bundle;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.showtime.ChatItem.BotMessage;
+import com.example.showtime.ChatItem.UserMessage;
 import com.example.showtime.HelpPage.HelpPageActivity;
 import com.example.showtime.LandingPage.LandingPageActivity;
 import com.example.showtime.R;
@@ -42,7 +47,13 @@ public class ChatPageActivity extends AppCompatActivity {
             user_input = intent.getStringExtra(Utils.USER_INPUT);
         }
 
-        EditText chat_input = findViewById(R.id.chat_input);
-        chat_input.setText(user_input);
+        // Set up RecyclerView
+        RecyclerView recyclerView = findViewById(R.id.chat_page_recycler_view);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        ChatRecyclerViewAdapter adapter = new ChatRecyclerViewAdapter(this);
+        recyclerView.setAdapter(adapter);
+
+        // Add user's first message
+        adapter.addItem(new UserMessage(user_input));
     }
 }

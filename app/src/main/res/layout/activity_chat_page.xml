@@ -62,15 +62,24 @@
     <!-- Main white content area -->
     <FrameLayout
         android:id="@+id/main_content"
-        android:layout_width="409dp"
-        android:layout_height="394dp"
+        android:layout_width="413dp"
+        android:layout_height="0dp"
         android:background="@android:color/white"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/chat_input_container"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/header_container"
-        app:layout_constraintVertical_bias="0.003" >
+        app:layout_constraintTop_toBottomOf="@id/header_container">
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/chat_page_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
     </FrameLayout>
 
 
