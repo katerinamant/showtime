@@ -1,5 +1,6 @@
 package com.example.showtime.ChatPage;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -9,6 +10,8 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -27,6 +30,7 @@ import com.example.showtime.HelpPage.HelpPageActivity;
 import com.example.showtime.LandingPage.LandingPageActivity;
 import com.example.showtime.R;
 import com.example.showtime.Utils.Utils;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import org.json.JSONException;
 
@@ -103,32 +107,35 @@ public class ChatPageActivity extends AppCompatActivity {
         clearChatBtn.setOnClickListener(v -> {
             if (adapter.getItemCount() == 0) return;
 
-            // Inflate popup layout
-            LayoutInflater layoutInflater = (LayoutInflater) getApplicationContext().getSystemService(LAYOUT_INFLATER_SERVICE);
-            View pop_up = layoutInflater.inflate(R.layout.popup_confirm_clear_chat, null);
+            // Inflate the custom layout
+            LayoutInflater inflater = LayoutInflater.from(this);
+            View popupView = inflater.inflate(R.layout.popup_confirm_clear_chat, null);
 
-            // Create and show confirm rating popup
-            int width = LinearLayout.LayoutParams.WRAP_CONTENT;
-            int height = LinearLayout.LayoutParams.WRAP_CONTENT;
-            // The array is used because
-            // the variable needs to be final
-            // for the onClickListener
-            clearChatPopup[0] = new PopupWindow(pop_up, width, height, true);
-            clearChatPopup[0].showAtLocation(relativeLayout, Gravity.CENTER, 0, 0);
+            // Create the dialog
+            AlertDialog dialog = new MaterialAlertDialogBuilder(this)
+                    .setView(popupView)
+                    .create();
+            dialog.setCanceledOnTouchOutside(false);
 
-            // Dismiss popup when "Cancel" button is clicked
-            Button cancelButton = pop_up.findViewById(R.id.btn_cancel_clear_chat);
-            cancelButton.setOnClickListener(cancel -> {
-                clearChatPopup[0].dismiss();
-                clearChatPopup[0] = null;
-            });
+            // Set up the buttons inside the popup
+            Button cancelButton = popupView.findViewById(R.id.btn_cancel_clear_chat);
+            Button confirmButton = popupView.findViewById(R.id.btn_confirm_clear_chat);
 
-            Button confirmButton = pop_up.findViewById(R.id.btn_confirm_clear_chat);
+            cancelButton.setOnClickListener(cancel -> dialog.dismiss());
+
             confirmButton.setOnClickListener(confirm -> {
                 adapter.clearChat();
-                clearChatPopup[0].dismiss();
-                clearChatPopup[0] = null;
+                dialog.dismiss();
             });
+
+            // Show the dialog
+            dialog.show();
+
+            // Force dialog to match parent width
+            Window window = dialog.getWindow();
+            if (window != null) {
+                window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            }
         });
     }
 }
