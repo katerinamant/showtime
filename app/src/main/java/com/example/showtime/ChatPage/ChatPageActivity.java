@@ -5,9 +5,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -20,16 +28,21 @@ import com.example.showtime.LandingPage.LandingPageActivity;
 import com.example.showtime.R;
 import com.example.showtime.Utils.Utils;
 
+import org.json.JSONException;
+
 public class ChatPageActivity extends AppCompatActivity {
     private ChatPageViewModel viewModel;
     String userInput;
     UserMessage userMessage;
     BotMessage botMessage;
+    final PopupWindow[] clearChatPopup = {null};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat_page);
+
+        RelativeLayout relativeLayout = findViewById(R.id.relative_chat_page);
 
         // Get user input from LandingPageActivity
         if (savedInstanceState == null) {
@@ -85,12 +98,37 @@ public class ChatPageActivity extends AppCompatActivity {
             // TODO Disable send option after sending the message (to wait for bot response)
         });
 
-        // Clear chat button
+        // Show popup when clear chat button is clicked
         ImageView clearChatBtn = findViewById(R.id.clear_chat_button);
         clearChatBtn.setOnClickListener(v -> {
-            adapter.clearChat();
+            if (adapter.getItemCount() == 0) return;
 
-            // TODO Add popup confirmation
+            // Inflate popup layout
+            LayoutInflater layoutInflater = (LayoutInflater) getApplicationContext().getSystemService(LAYOUT_INFLATER_SERVICE);
+            View pop_up = layoutInflater.inflate(R.layout.popup_confirm_clear_chat, null);
+
+            // Create and show confirm rating popup
+            int width = LinearLayout.LayoutParams.WRAP_CONTENT;
+            int height = LinearLayout.LayoutParams.WRAP_CONTENT;
+            // The array is used because
+            // the variable needs to be final
+            // for the onClickListener
+            clearChatPopup[0] = new PopupWindow(pop_up, width, height, true);
+            clearChatPopup[0].showAtLocation(relativeLayout, Gravity.CENTER, 0, 0);
+
+            // Dismiss popup when "Cancel" button is clicked
+            Button cancelButton = pop_up.findViewById(R.id.btn_cancel_clear_chat);
+            cancelButton.setOnClickListener(cancel -> {
+                clearChatPopup[0].dismiss();
+                clearChatPopup[0] = null;
+            });
+
+            Button confirmButton = pop_up.findViewById(R.id.btn_confirm_clear_chat);
+            confirmButton.setOnClickListener(confirm -> {
+                adapter.clearChat();
+                clearChatPopup[0].dismiss();
+                clearChatPopup[0] = null;
+            });
         });
     }
 }

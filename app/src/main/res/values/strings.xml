@@ -5,6 +5,8 @@
     <string name="ok">OK</string>
     <string name="na">N/A</string>
     <string name="hint">Ask me anything!</string>
+    <string name="confirm">Confirm</string>
+    <string name="cancel">Cancel</string>
 
     <!-- Landing Page -->
     <string name="booth_img_desc">Ticket booth with ShowTime logo</string>
@@ -20,6 +22,8 @@
 
     <!-- Chat Page -->
     <string name="sent_desc">Send message</string>
+    <string name="clear_chat_title"> 🗑️ Clear Chat?</string>
+    <string name="clear_chat_desc">Wipes the chat clean, but don’t worry — your reservations and other actions are safe.</string>
 
     <!-- Banners -->
     <string name="res_code">Reservation Code</string>
