@@ -32,7 +32,7 @@ public class FaqPresenter {
 
                 faq = new Faq();
                 faq.setQuestion("I need accessible seating. Can UsherBot help me?");
-                faq.setAnswer("Absolutely. Just let UsherBot know you need accessible seating, and it will reserve your seats in the designated seating area -one seat for you and one for a companion");
+                faq.setAnswer("Absolutely. Just let UsherBot know you need accessible seating, and it will reserve your seats in the designated seating area -one seat for you and one for a companion.");
                 res.add(faq);
 
                 faq = new Faq();
@@ -138,8 +138,9 @@ public class FaqPresenter {
 
                 faq = new Faq();
                 faq.setQuestion("How do I speak to a real person?");
-                faq.setAnswer("Ask UsherBot to connect you to a support agent (during our operating hours -Monday to Friday 8:00AM-8:00PM).\n\n" +
-                        "You can also call our support line at 210-0000000.");
+                faq.setAnswer("Ask UsherBot to connect you to a support agent (*).\n\n" +
+                        "You can also call our support line at 210-0000000 (*).\n\n" +
+                        "* Working hours: MON-FRI 8:00-20:00");
                 res.add(faq);
 
                 faq = new Faq();
