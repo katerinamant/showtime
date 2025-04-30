@@ -42,7 +42,7 @@
             app:layout_constraintTop_toBottomOf="@+id/clear_chat_title" />
 
         <Button
-            android:id="@+id/btn_confirm_clear_chat"
+            android:id="@+id/btn_cancel_clear_chat"
             android:layout_width="144dp"
             android:layout_height="56dp"
             android:layout_marginStart="20dp"
@@ -50,7 +50,7 @@
             android:layout_marginBottom="12dp"
             android:backgroundTint="@color/white"
             android:fontFamily="@font/inter_semibold"
-            android:text="@string/confirm"
+            android:text="@string/cancel"
             android:textAllCaps="false"
             android:textColor="@color/black"
             android:textSize="20sp"
@@ -62,21 +62,21 @@
             app:strokeWidth="1dp" />
 
         <Button
-            android:id="@+id/btn_cancel_clear_chat"
+            android:id="@+id/btn_confirm_clear_chat"
             android:layout_width="144dp"
             android:layout_height="56dp"
             android:layout_marginTop="20dp"
             android:layout_marginEnd="20dp"
             android:backgroundTint="@color/white"
             android:fontFamily="@font/inter_semibold"
-            android:text="@string/cancel"
+            android:text="@string/confirm"
             android:textAllCaps="false"
             android:textColor="@color/black"
             android:textSize="20sp"
             app:cornerRadius="8dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.867"
-            app:layout_constraintStart_toEndOf="@+id/btn_confirm_clear_chat"
+            app:layout_constraintStart_toEndOf="@+id/btn_cancel_clear_chat"
             app:layout_constraintTop_toBottomOf="@+id/clear_chat_desc"
             app:strokeColor="@color/coral"
             app:strokeWidth="1dp" />
