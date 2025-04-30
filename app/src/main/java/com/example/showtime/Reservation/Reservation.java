@@ -1,7 +1,7 @@
 package com.example.showtime.Reservation;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class Reservation {
@@ -64,7 +64,7 @@ public class Reservation {
             node.put("date", date);
             node.put("time", isForEarlyShowing ? show.getEarlyShowing() : show.getLateShowing());
             node.put("ticketNum", ticketNum);
-            node.put("section", section.toString().substring(0,1).toUpperCase() + section.toString().substring(1).toLowerCase());
+            node.put("section", section.toString().substring(0, 1).toUpperCase() + section.toString().substring(1).toLowerCase());
 
             return mapper.writeValueAsString(node);
         } catch (Exception e) {

@@ -1,7 +1,6 @@
 package com.example.showtime.ChatPage;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -32,19 +31,17 @@ import com.example.showtime.Reservation.ReservationManager;
 import com.example.showtime.Utils.ResponseJSON;
 import com.example.showtime.Utils.Utils;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
-
 import com.openai.client.OpenAIClientAsync;
 import com.openai.client.okhttp.OpenAIOkHttpClientAsync;
 import com.openai.models.ChatModel;
 import com.openai.models.responses.Response;
 import com.openai.models.responses.ResponseCreateParams;
-
 import com.openai.models.responses.ResponseOutputMessage;
 import com.openai.models.responses.ResponseOutputText;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 public class ChatPageActivity extends AppCompatActivity implements ChatRecyclerViewAdapter.ChatEventListener {
     private ChatPageViewModel viewModel;

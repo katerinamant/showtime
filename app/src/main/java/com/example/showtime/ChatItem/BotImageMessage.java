@@ -1,7 +1,5 @@
 package com.example.showtime.ChatItem;
 
-import androidx.annotation.DrawableRes;
-
 public class BotImageMessage extends ChatItem {
     public int resourceId;
 

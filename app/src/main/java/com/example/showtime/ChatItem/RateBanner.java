@@ -4,6 +4,7 @@ import com.example.showtime.Reservation.Reservation;
 
 public class RateBanner extends ChatItem {
     Reservation reservation;
+
     public RateBanner(Reservation reservation) {
         this.reservation = reservation;
     }
