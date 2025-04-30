@@ -24,6 +24,8 @@
     <string name="sent_desc">Send message</string>
     <string name="clear_chat_title"> 🗑️ Clear Chat?</string>
     <string name="clear_chat_desc">Wipes the chat clean, but don’t worry — your reservations and other actions are safe.</string>
+    <string name="confirm_rating_title">Confirm rating?</string>
+    <string name="rating_title">You rated</string>
 
     <!-- Banners -->
     <string name="res_code">Reservation Code</string>

@@ -1,5 +1,6 @@
 package com.example.showtime.ChatPage;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,6 +13,8 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RatingBar;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -43,7 +46,7 @@ import com.openai.models.responses.ResponseCreateParams;
 import com.openai.models.responses.ResponseOutputMessage;
 import com.openai.models.responses.ResponseOutputText;
 
-public class ChatPageActivity extends AppCompatActivity {
+public class ChatPageActivity extends AppCompatActivity implements ChatRecyclerViewAdapter.ChatEventListener {
     private ChatPageViewModel viewModel;
     private RecyclerView recyclerView;
     private ChatRecyclerViewAdapter recyclerViewAdapter;
@@ -54,7 +57,7 @@ public class ChatPageActivity extends AppCompatActivity {
             .apiKey("myKey")
             .build();
 
-    ChatItem userMessage, botMessage, textMessage, ticketBanner, botImgMessage;
+    ChatItem userMessage, botMessage, textMessage, ticketBanner, botImgMessage, rateBanner;
     ImageView sendBtn;
     String userInput;
     String previousResponseId;
@@ -185,6 +188,7 @@ public class ChatPageActivity extends AppCompatActivity {
                 botMessage = viewModel.getPresenter().getNewBotMessage(responseJSON.getMessage().orElse("I didn't quite understand that, can you ask again?"));
                 ticketBanner = null;
                 botImgMessage = null;
+                rateBanner = null;
 
                 if (responseJSON.getIntent().isPresent() && responseJSON.getReservation().isPresent()) {
                     String intent = responseJSON.getIntent().get().toLowerCase();
@@ -213,6 +217,10 @@ public class ChatPageActivity extends AppCompatActivity {
                             int resourceId = R.drawable.seating_chart;
                             botImgMessage = viewModel.getPresenter().getNewBotImageMessage(resourceId);
                             break;
+                        case "rate":
+                            Reservation reservation = responseJSON.getReservation().get();
+                            rateBanner = viewModel.getPresenter().getNewRateBanner(reservation);
+                            break;
                     }
                 }
 
@@ -226,6 +234,9 @@ public class ChatPageActivity extends AppCompatActivity {
                     }
                     if (botImgMessage != null) {
                         addToRecyclerView(botImgMessage);
+                    }
+                    if (rateBanner != null) {
+                        addToRecyclerView(rateBanner);
                     }
 
                     // Enable send button
@@ -259,7 +270,7 @@ public class ChatPageActivity extends AppCompatActivity {
     void setUpRecyclerView() {
         recyclerView = findViewById(R.id.chat_page_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerViewAdapter = new ChatRecyclerViewAdapter(this);
+        recyclerViewAdapter = new ChatRecyclerViewAdapter(this, this);
         recyclerView.setAdapter(recyclerViewAdapter);
 
         // Add user's first message from the LandingPage
@@ -307,5 +318,55 @@ public class ChatPageActivity extends AppCompatActivity {
                 window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             }
         });
+    }
+
+    // ItemSelectionListener implementation
+    @Override
+    public void onRating(RatingBar ratingBar, String showName, int rating) {
+        @SuppressLint("DefaultLocale") String rating_text = String.format("%d.0 / 5.0", rating);
+        // Show popup when rating is selected
+        if (recyclerViewAdapter.getItemCount() == 0) return;
+
+        // Inflate the custom layout
+        LayoutInflater inflater = LayoutInflater.from(this);
+        View popupView = inflater.inflate(R.layout.popup_confirm_rating, null);
+
+        // Create the dialog
+        AlertDialog dialog = new MaterialAlertDialogBuilder(this)
+                .setView(popupView)
+                .create();
+        dialog.setCanceledOnTouchOutside(false);
+
+        // Set up text
+        TextView showNameTxt = popupView.findViewById(R.id.rating_showName);
+        showNameTxt.setText(showName);
+        TextView ratingTxt = popupView.findViewById(R.id.rating_score);
+        ratingTxt.setText(rating_text);
+
+        // Set up the buttons inside the popup
+        Button cancelButton = popupView.findViewById(R.id.btn_cancel_rating);
+        Button confirmButton = popupView.findViewById(R.id.btn_confirm_rating);
+
+        cancelButton.setOnClickListener(cancel -> dialog.dismiss());
+
+        confirmButton.setOnClickListener(confirm -> {
+            // Show the rating as a user message for UsherBot to respond
+            userMessage = viewModel.getPresenter().getNewUserMessage(rating_text);
+            addToRecyclerView(userMessage);
+            waitForBotMsg((UserMessage) userMessage);
+
+            // Disable rating bar after confirmed rating
+            ratingBar.setIsIndicator(true);
+            dialog.dismiss();
+        });
+
+        // Show the dialog
+        dialog.show();
+
+        // Force dialog to match parent width
+        Window window = dialog.getWindow();
+        if (window != null) {
+            window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        }
     }
 }
