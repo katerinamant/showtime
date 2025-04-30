@@ -1,5 +1,6 @@
 package com.example.showtime.ChatPage;
 
+import com.example.showtime.ChatItem.BotImageMessage;
 import com.example.showtime.ChatItem.BotMessage;
 import com.example.showtime.ChatItem.TextMessage;
 import com.example.showtime.ChatItem.TicketBanner;
@@ -21,5 +22,9 @@ public class ChatPagePresenter {
 
     public TicketBanner getNewTicketBanner(Reservation reservation) {
         return new TicketBanner(reservation);
+    }
+
+    public BotImageMessage getNewBotImageMessage(int resourceId) {
+        return new BotImageMessage(resourceId);
     }
 }

@@ -1,5 +1,6 @@
 package com.example.showtime.ChatPage;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -53,7 +54,7 @@ public class ChatPageActivity extends AppCompatActivity {
             .apiKey("myKey")
             .build();
 
-    ChatItem userMessage, botMessage, textMessage, ticketBanner;
+    ChatItem userMessage, botMessage, textMessage, ticketBanner, botImgMessage;
     ImageView sendBtn;
     String userInput;
     String previousResponseId;
@@ -183,6 +184,7 @@ public class ChatPageActivity extends AppCompatActivity {
                 previousResponseId = response.id();
                 botMessage = viewModel.getPresenter().getNewBotMessage(responseJSON.getMessage().orElse("I didn't quite understand that, can you ask again?"));
                 ticketBanner = null;
+                botImgMessage = null;
 
                 if (responseJSON.getIntent().isPresent() && responseJSON.getReservation().isPresent()) {
                     String intent = responseJSON.getIntent().get().toLowerCase();
@@ -202,6 +204,18 @@ public class ChatPageActivity extends AppCompatActivity {
                     }
                 }
 
+                // If the model has responded with both a ticket banner and a show extra instruction,
+                // always prefer to show the ticket banner and skip the images.
+                if (ticketBanner == null && responseJSON.getShowExtraValue().isPresent()) {
+                    String showExtraValue = responseJSON.getShowExtraValue().get().toLowerCase();
+                    switch (showExtraValue) {
+                        case "seating_chart":
+                            int resourceId = R.drawable.seating_chart;
+                            botImgMessage = viewModel.getPresenter().getNewBotImageMessage(resourceId);
+                            break;
+                    }
+                }
+
                 mainHandler.post(() -> {
                     // Deletes "processing..." message
                     recyclerViewAdapter.deleteLastItem();
@@ -209,6 +223,9 @@ public class ChatPageActivity extends AppCompatActivity {
                     addToRecyclerView(botMessage);
                     if (ticketBanner != null) {
                         addToRecyclerView(ticketBanner);
+                    }
+                    if (botImgMessage != null) {
+                        addToRecyclerView(botImgMessage);
                     }
 
                     // Enable send button

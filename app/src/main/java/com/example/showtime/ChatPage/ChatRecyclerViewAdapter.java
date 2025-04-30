@@ -4,11 +4,14 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.showtime.ChatItem.BotImageMessage;
 import com.example.showtime.ChatItem.BotMessage;
 import com.example.showtime.ChatItem.ChatItem;
 import com.example.showtime.ChatItem.TextMessage;
@@ -16,6 +19,7 @@ import com.example.showtime.ChatItem.TicketBanner;
 import com.example.showtime.ChatItem.UserMessage;
 import com.example.showtime.R;
 import com.example.showtime.Reservation.Reservation;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +41,7 @@ public class ChatRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
         if (item instanceof BotMessage) return ChatItem.TYPE_BOT;
         if (item instanceof TextMessage) return ChatItem.TYPE_TEXT;
         if (item instanceof TicketBanner) return ChatItem.TYPE_TICKET_BANNER;
+        if (item instanceof BotImageMessage) return ChatItem.TYPE_BOT_IMAGE;
 
         return -1;
     }
@@ -59,6 +64,9 @@ public class ChatRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
         } else if (viewType == ChatItem.TYPE_TICKET_BANNER) {
             View view = inflater.inflate(R.layout.banner_ticket, parent, false);
             return new TicketBannerViewHolder(view);
+        } else if (viewType == ChatItem.TYPE_BOT_IMAGE) {
+            View view = inflater.inflate(R.layout.msg_img, parent, false);
+            return new BotImageViewHolder(view, context);
         }
 
         throw new IllegalArgumentException("Unknown viewType " + viewType);
@@ -76,6 +84,8 @@ public class ChatRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
             ((TextViewHolder) holder).bind((TextMessage) item);
         } else if (holder instanceof TicketBannerViewHolder) {
             ((TicketBannerViewHolder) holder).bind((TicketBanner) item);
+        } else if (holder instanceof BotImageViewHolder) {
+            ((BotImageViewHolder) holder).bind((BotImageMessage) item);
         }
     }
 
@@ -168,6 +178,37 @@ public class ChatRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
             showName.setText(reservation.getShowName());
             customerName.setText(reservation.getCustomerName());
             totalPrice.setText(String.format("%s€", reservation.getTotalPrice()));
+        }
+    }
+
+    static class BotImageViewHolder extends RecyclerView.ViewHolder {
+        private final Context context;
+        private final ImageView img;
+
+        public BotImageViewHolder(@NonNull View itemView, Context context) {
+            super(itemView);
+            this.context = context;
+            img = itemView.findViewById(R.id.msg_img);
+        }
+
+        public void bind(BotImageMessage botImageMessage) {
+            img.setImageResource(botImageMessage.getResourceId());
+            img.setOnClickListener(v -> {
+                // Enlarge image from bot message when pressed
+                LayoutInflater inflater = LayoutInflater.from(context);
+                View popupView = inflater.inflate(R.layout.popup_enlarged_image, null);
+
+                ImageView enlargedImage = popupView.findViewById(R.id.enlarged_image);
+                enlargedImage.setImageResource(botImageMessage.getResourceId());
+
+                // Create the dialog
+                AlertDialog dialog = new MaterialAlertDialogBuilder(context)
+                        .setView(popupView)
+                        .create();
+
+                // Show the dialog
+                dialog.show();
+            });
         }
     }
 }

@@ -8,12 +8,13 @@ import java.util.Optional;
 
 public class ResponseJSON {
     private final Optional<String> message;
-    private final Optional<String> intent;
+    private final Optional<String> intent, showExtra;
     private final Optional<Reservation> reservation;
 
-    public ResponseJSON(Optional<String> message, Optional<String> intent, Optional<Reservation> reservation) {
+    public ResponseJSON(Optional<String> message, Optional<String> intent, Optional<String> showExtra, Optional<Reservation> reservation) {
         this.message = message;
         this.intent = intent;
+        this.showExtra = showExtra;
         this.reservation = reservation;
     }
 
@@ -23,6 +24,10 @@ public class ResponseJSON {
 
     public Optional<String> getIntent() {
         return intent;
+    }
+
+    public Optional<String> getShowExtraValue() {
+        return showExtra;
     }
 
     public Optional<Reservation> getReservation() {
@@ -46,6 +51,7 @@ public class ResponseJSON {
             JsonNode node = mapper.readTree(json);
 
             Optional<String> message = optionalNonEmptyText(node, "message");
+            Optional<String> showExtra = optionalNonEmptyText(node, "showExtra");
             Optional<String> intent = optionalNonEmptyText(node, "intent");
 
             Optional<Reservation> reservation = Optional.empty();
@@ -54,7 +60,7 @@ public class ResponseJSON {
                 reservation = Optional.of(Reservation.fromJson(reservationJson));
             }
 
-            return new ResponseJSON(message, intent, reservation);
+            return new ResponseJSON(message, intent, showExtra, reservation);
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException("Failed to deserialize JSON to ReservationJSONObject", e);
