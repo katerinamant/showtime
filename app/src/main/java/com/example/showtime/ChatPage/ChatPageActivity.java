@@ -53,7 +53,7 @@ public class ChatPageActivity extends AppCompatActivity {
             .apiKey("myKey")
             .build();
 
-    ChatItem userMessage, botMessage, textMessage;
+    ChatItem userMessage, botMessage, textMessage, ticketBanner;
     ImageView sendBtn;
     String userInput;
     String previousResponseId;
@@ -182,6 +182,7 @@ public class ChatPageActivity extends AppCompatActivity {
 
                 previousResponseId = response.id();
                 botMessage = viewModel.getPresenter().getNewBotMessage(responseJSON.getMessage().orElse("I didn't quite understand that, can you ask again?"));
+                ticketBanner = null;
 
                 if (responseJSON.getIntent().isPresent() && responseJSON.getReservation().isPresent()) {
                     String intent = responseJSON.getIntent().get().toLowerCase();
@@ -189,12 +190,14 @@ public class ChatPageActivity extends AppCompatActivity {
                     switch (intent) {
                         case "new":
                             reservationManager.addReservation(reservation.getReservationCode(), reservation);
+                            ticketBanner = viewModel.getPresenter().getNewTicketBanner(reservation);
                             break;
                         case "cancel":
                             reservationManager.deleteReservation(reservation.getReservationCode());
                             break;
                         case "change":
                             reservationManager.updateReservation(reservation.getReservationCode(), reservation);
+                            ticketBanner = viewModel.getPresenter().getNewTicketBanner(reservation);
                             break;
                     }
                 }
@@ -204,6 +207,9 @@ public class ChatPageActivity extends AppCompatActivity {
                     recyclerViewAdapter.deleteLastItem();
 
                     addToRecyclerView(botMessage);
+                    if (ticketBanner != null) {
+                        addToRecyclerView(ticketBanner);
+                    }
 
                     // Enable send button
                     toggleSendButton(true);

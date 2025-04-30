@@ -33,7 +33,6 @@
     <string name="res_name">Reservation Name</string>
     <string name="amount_title">Outstanding amount:</string>
     <string name="amount">amount</string>
-    <string name="euro_symbol">€</string>
 
     <!-- Help Page -->
     <string name="call_center_title">Call Center</string>

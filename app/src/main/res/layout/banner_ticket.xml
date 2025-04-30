@@ -4,7 +4,12 @@
     android:id="@+id/ticket_banner_constraint_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/box_rounded_coral">
+    android:layout_marginStart="20dp"
+    android:layout_marginTop="8dp"
+    android:layout_marginEnd="64dp"
+    android:layout_marginBottom="8dp"
+    android:background="@drawable/box_rounded_coral"
+    android:padding="12dp">
 
     <ImageView
         android:id="@+id/ticket_icon"
@@ -22,7 +27,6 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
         android:layout_marginTop="18dp"
-        android:layout_marginEnd="20dp"
         android:ellipsize="end"
         android:fontFamily="@font/inter_extrabold"
         android:maxLines="1"
@@ -31,16 +35,16 @@
         android:textAllCaps="false"
         android:textColor="@color/coral"
         android:textSize="15sp"
+        app:layout_constraintEnd_toStartOf="@+id/ticket_date"
         app:layout_constraintStart_toEndOf="@+id/ticket_icon"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/rate_date"
+        android:id="@+id/ticket_date"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="60dp"
         android:layout_marginTop="10dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginEnd="8dp"
         android:ellipsize="end"
         android:fontFamily="@font/inter_semibold"
         android:maxLines="2"
@@ -50,16 +54,13 @@
         android:textColor="@color/coral"
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/ticket_res_code"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/rate_time"
+        android:id="@+id/ticket_time"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="60dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginEnd="8dp"
         android:ellipsize="end"
         android:fontFamily="@font/inter_semibold"
         android:maxLines="2"
@@ -69,9 +70,7 @@
         android:textColor="@color/coral"
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/ticket_res_code"
-        app:layout_constraintTop_toBottomOf="@id/rate_date" />
+        app:layout_constraintTop_toBottomOf="@id/ticket_date" />
 
     <TextView
         android:id="@+id/ticket_show"
@@ -92,7 +91,7 @@
         app:layout_constraintTop_toBottomOf="@id/ticket_icon" />
 
     <TextView
-        android:id="@+id/ticket_name"
+        android:id="@+id/ticket_customer_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
@@ -126,10 +125,10 @@
         android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/ticket_name" />
+        app:layout_constraintTop_toBottomOf="@id/ticket_customer_name" />
 
     <TextView
-        android:id="@+id/ticket_amount"
+        android:id="@+id/ticket_total_price"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="5dp"
@@ -144,26 +143,8 @@
         android:textColor="@color/black"
         android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/ticket_euro_symbol"
-        app:layout_constraintStart_toEndOf="@id/ticket_amount_title"
-        app:layout_constraintTop_toBottomOf="@id/ticket_name" />
-
-    <TextView
-        android:id="@+id/ticket_euro_symbol"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="10dp"
-        android:ellipsize="end"
-        android:fontFamily="@font/inter_extrabold"
-        android:maxLines="2"
-        android:text="@string/euro_symbol"
-        android:textAlignment="viewStart"
-        android:textAllCaps="false"
-        android:textColor="@color/black"
-        android:textSize="14sp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/ticket_amount"
-        app:layout_constraintTop_toBottomOf="@id/ticket_name" />
+        app:layout_constraintStart_toEndOf="@id/ticket_amount_title"
+        app:layout_constraintTop_toBottomOf="@id/ticket_customer_name" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

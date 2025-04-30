@@ -12,8 +12,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.showtime.ChatItem.BotMessage;
 import com.example.showtime.ChatItem.ChatItem;
 import com.example.showtime.ChatItem.TextMessage;
+import com.example.showtime.ChatItem.TicketBanner;
 import com.example.showtime.ChatItem.UserMessage;
 import com.example.showtime.R;
+import com.example.showtime.Reservation.Reservation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +36,7 @@ public class ChatRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
         if (item instanceof UserMessage) return ChatItem.TYPE_USER;
         if (item instanceof BotMessage) return ChatItem.TYPE_BOT;
         if (item instanceof TextMessage) return ChatItem.TYPE_TEXT;
+        if (item instanceof TicketBanner) return ChatItem.TYPE_TICKET_BANNER;
 
         return -1;
     }
@@ -53,6 +56,9 @@ public class ChatRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
         } else if (viewType == ChatItem.TYPE_TEXT) {
             View view = inflater.inflate(R.layout.msg_text, parent, false);
             return new TextViewHolder(view);
+        } else if (viewType == ChatItem.TYPE_TICKET_BANNER) {
+            View view = inflater.inflate(R.layout.banner_ticket, parent, false);
+            return new TicketBannerViewHolder(view);
         }
 
         throw new IllegalArgumentException("Unknown viewType " + viewType);
@@ -68,6 +74,8 @@ public class ChatRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
             ((BotViewHolder) holder).bind((BotMessage) item);
         } else if (holder instanceof TextViewHolder) {
             ((TextViewHolder) holder).bind((TextMessage) item);
+        } else if (holder instanceof TicketBannerViewHolder) {
+            ((TicketBannerViewHolder) holder).bind((TicketBanner) item);
         }
     }
 
@@ -135,6 +143,31 @@ public class ChatRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
 
         public void bind(TextMessage msg) {
             textView.setText(msg.getMessage());
+        }
+    }
+
+    static class TicketBannerViewHolder extends RecyclerView.ViewHolder {
+        private final TextView reservationCode, date, time, showName, customerName, totalPrice;
+
+        public TicketBannerViewHolder(@NonNull View itemView) {
+            super(itemView);
+            reservationCode = itemView.findViewById(R.id.ticket_res_code);
+            date = itemView.findViewById(R.id.ticket_date);
+            time = itemView.findViewById(R.id.ticket_time);
+            showName = itemView.findViewById(R.id.ticket_show);
+            customerName = itemView.findViewById(R.id.ticket_customer_name);
+            totalPrice = itemView.findViewById(R.id.ticket_total_price);
+        }
+
+        public void bind(TicketBanner ticketBanner) {
+            Reservation reservation = ticketBanner.getReservation();
+
+            reservationCode.setText(reservation.getReservationCode());
+            date.setText(reservation.getDate());
+            time.setText(reservation.getTime());
+            showName.setText(reservation.getShowName());
+            customerName.setText(reservation.getCustomerName());
+            totalPrice.setText(String.format("%s€", reservation.getTotalPrice()));
         }
     }
 }
