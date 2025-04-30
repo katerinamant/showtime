@@ -1,11 +1,11 @@
-package com.example.showtime.ChatPage;
+package com.example.showtime.Reservation;
 
 import java.util.HashMap;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 
-class ReservationManager {
+public class ReservationManager {
     private final HashMap<String, Reservation> reservations = new HashMap<>();
 
     public Reservation getReservation(String reservationCode) {
@@ -39,4 +39,3 @@ class ReservationManager {
         }
     }
 }
-

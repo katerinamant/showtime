@@ -1,4 +1,4 @@
-package com.example.showtime.ChatPage;
+package com.example.showtime.Reservation;
 
 public enum Show {
     PETER_PAN("Peter Pan", "5:00PM", "8:00PM"),

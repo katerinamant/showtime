@@ -1,5 +1,6 @@
-package com.example.showtime.ChatPage;
+package com.example.showtime.Utils;
 
+import com.example.showtime.Reservation.Reservation;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -55,6 +56,7 @@ public class ResponseJSON {
 
             return new ResponseJSON(message, intent, reservation);
         } catch (Exception e) {
+            e.printStackTrace();
             throw new RuntimeException("Failed to deserialize JSON to ReservationJSONObject", e);
         }
     }

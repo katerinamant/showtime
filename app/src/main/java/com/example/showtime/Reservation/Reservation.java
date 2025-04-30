@@ -1,4 +1,4 @@
-package com.example.showtime.ChatPage;
+package com.example.showtime.Reservation;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.JsonNode;

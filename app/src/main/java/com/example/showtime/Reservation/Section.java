@@ -1,4 +1,4 @@
-package com.example.showtime.ChatPage;
+package com.example.showtime.Reservation;
 
 public enum Section {
     RED(40.0f),
