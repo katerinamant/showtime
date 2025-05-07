@@ -1,27 +1,16 @@
-package com.example.showtime.ChatPage;
+package com.example.showtime.RecyclerView;
 
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.RatingBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.showtime.ChatItem.BotImageMessage;
-import com.example.showtime.ChatItem.BotMessage;
-import com.example.showtime.ChatItem.ChatItem;
-import com.example.showtime.ChatItem.RateBanner;
-import com.example.showtime.ChatItem.TextMessage;
-import com.example.showtime.ChatItem.TicketBanner;
-import com.example.showtime.ChatItem.UserMessage;
+import com.example.showtime.Utils.SuggestedQuestion;
 import com.example.showtime.R;
-import com.example.showtime.Reservation.Reservation;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,9 +19,9 @@ public class SuggestedQuestionsRecyclerViewAdapter extends RecyclerView.Adapter<
 
     private final List<SuggestedQuestion> items = new ArrayList<>();
     private final Context context;
-    private final SuggestedQuestionsListener listener;
+    private final ItemSelectionListener listener;
 
-    public SuggestedQuestionsRecyclerViewAdapter(Context context, SuggestedQuestionsListener listener) {
+    public SuggestedQuestionsRecyclerViewAdapter(Context context, ItemSelectionListener listener) {
         this.context = context;
         this.listener = listener;
     }
@@ -57,6 +46,7 @@ public class SuggestedQuestionsRecyclerViewAdapter extends RecyclerView.Adapter<
         return items.size();
     }
 
+    // Update questions list
     public void setQuestions(List<SuggestedQuestion> list) {
         items.clear();
         items.addAll(list);
@@ -70,11 +60,11 @@ public class SuggestedQuestionsRecyclerViewAdapter extends RecyclerView.Adapter<
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        private final SuggestedQuestionsListener listener;
+        private final ItemSelectionListener listener;
         private SuggestedQuestion suggestedQuestion;
         public final TextView questionText;
 
-        public ViewHolder(@NonNull View view, SuggestedQuestionsListener listener) {
+        public ViewHolder(@NonNull View view, ItemSelectionListener listener) {
             super(view);
             this.listener = listener;
 
@@ -90,12 +80,5 @@ public class SuggestedQuestionsRecyclerViewAdapter extends RecyclerView.Adapter<
         public void onClick(View v) {
             listener.onSuggestedQuestionClick(this.suggestedQuestion);
         }
-    }
-
-    /**
-     * Define an interface in order to pass events to the ChatPageActivity.
-     */
-    public interface SuggestedQuestionsListener {
-        void onSuggestedQuestionClick(SuggestedQuestion suggestedQuestion);
     }
 }

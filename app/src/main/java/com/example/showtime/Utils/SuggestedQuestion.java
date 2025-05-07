@@ -1,4 +1,4 @@
-package com.example.showtime.ChatPage;
+package com.example.showtime.Utils;
 
 public class SuggestedQuestion {
     public String question;

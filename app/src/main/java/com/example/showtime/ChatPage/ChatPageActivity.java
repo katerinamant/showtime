@@ -26,9 +26,13 @@ import com.example.showtime.ChatItem.UserMessage;
 import com.example.showtime.HelpPage.HelpPageActivity;
 import com.example.showtime.LandingPage.LandingPageActivity;
 import com.example.showtime.R;
+import com.example.showtime.RecyclerView.ChatRecyclerViewAdapter;
+import com.example.showtime.RecyclerView.ItemSelectionListener;
+import com.example.showtime.RecyclerView.SuggestedQuestionsRecyclerViewAdapter;
 import com.example.showtime.Reservation.Reservation;
 import com.example.showtime.Reservation.ReservationManager;
 import com.example.showtime.Utils.ResponseJSON;
+import com.example.showtime.Utils.SuggestedQuestion;
 import com.example.showtime.Utils.Utils;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.openai.client.OpenAIClientAsync;
@@ -44,7 +48,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
-public class ChatPageActivity extends AppCompatActivity implements ChatRecyclerViewAdapter.ChatEventListener, SuggestedQuestionsRecyclerViewAdapter.SuggestedQuestionsListener {
+public class ChatPageActivity extends AppCompatActivity implements ItemSelectionListener {
     private ChatPageViewModel viewModel;
     private RecyclerView chatRecyclerView, questionsRecyclerView;
     private ChatRecyclerViewAdapter chatRecyclerViewAdapter;

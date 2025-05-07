@@ -1,4 +1,4 @@
-package com.example.showtime.ChatPage;
+package com.example.showtime.RecyclerView;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -30,9 +30,9 @@ public class ChatRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
 
     private final List<ChatItem> chatItems = new ArrayList<>();
     private final Context context;
-    private final ChatEventListener listener;
+    private final ItemSelectionListener listener;
 
-    public ChatRecyclerViewAdapter(Context context, ChatEventListener listener) {
+    public ChatRecyclerViewAdapter(Context context, ItemSelectionListener listener) {
         this.context = context;
         this.listener = listener;
     }
@@ -203,6 +203,8 @@ public class ChatRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
 
         public void bind(BotImageMessage botImageMessage) {
             img.setImageResource(botImageMessage.getResourceId());
+
+            // Show image popup when clicked
             img.setOnClickListener(v -> {
                 // Enlarge image from bot message when pressed
                 LayoutInflater inflater = LayoutInflater.from(context);
@@ -223,11 +225,11 @@ public class ChatRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
     }
 
     static class RateBannerViewHolder extends RecyclerView.ViewHolder {
-        private final ChatEventListener listener;
+        private final ItemSelectionListener listener;
         private final TextView showName, date, time;
         public final RatingBar ratingBar;
 
-        public RateBannerViewHolder(@NonNull View itemView, ChatEventListener listener) {
+        public RateBannerViewHolder(@NonNull View itemView, ItemSelectionListener listener) {
             super(itemView);
             this.listener = listener;
 
@@ -248,12 +250,5 @@ public class ChatRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
                     listener.onRating(ratingBar, reservation.getShowName(), (int) rating)
             );
         }
-    }
-
-    /**
-     * Define an interface in order to pass events to the ChatPageActivity.
-     */
-    public interface ChatEventListener {
-        void onRating(RatingBar ratingBar, String showName, int rating);
     }
 }
