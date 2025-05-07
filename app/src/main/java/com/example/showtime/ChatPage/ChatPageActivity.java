@@ -244,6 +244,7 @@ public class ChatPageActivity extends AppCompatActivity implements ItemSelection
                     questions.add(question);
                 }
 
+                // Update chat
                 mainHandler.post(() -> {
                     // Deletes "processing..." message
                     chatRecyclerViewAdapter.deleteLastItem();
@@ -261,6 +262,8 @@ public class ChatPageActivity extends AppCompatActivity implements ItemSelection
 
                     // Enable send button
                     toggleSendButton(true);
+
+                    // Show new suggested questions
                     questionsRecyclerViewAdapter.setQuestions(questions);
                 });
             } catch (Exception e) {
@@ -401,6 +404,15 @@ public class ChatPageActivity extends AppCompatActivity implements ItemSelection
 
     @Override
     public void onSuggestedQuestionClick(SuggestedQuestion suggestedQuestion) {
-        // TODO
+        if (suggestedQuestion.getQuestion().isEmpty()) return;
+
+        // Create userMessage object
+        userInput = suggestedQuestion.getQuestion().trim();
+        userMessage = viewModel.getPresenter().getNewUserMessage(userInput);
+
+        // Add new object to RecyclerView
+        addToChatRecyclerView(userMessage);
+
+        waitForBotMsg((UserMessage) userMessage);
     }
 }

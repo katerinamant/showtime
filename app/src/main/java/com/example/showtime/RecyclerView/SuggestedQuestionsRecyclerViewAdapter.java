@@ -69,10 +69,12 @@ public class SuggestedQuestionsRecyclerViewAdapter extends RecyclerView.Adapter<
             this.listener = listener;
 
             this.questionText = view.findViewById(R.id.question_text);
+            view.setOnClickListener(this);
         }
 
         public void setSuggestedQuestion(SuggestedQuestion suggestedQuestion) {
             this.suggestedQuestion = suggestedQuestion;
+
             questionText.setText(suggestedQuestion.getQuestion());
         }
 
