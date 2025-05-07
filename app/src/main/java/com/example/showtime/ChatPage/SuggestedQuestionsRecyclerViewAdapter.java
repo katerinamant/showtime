@@ -56,9 +56,16 @@ public class SuggestedQuestionsRecyclerViewAdapter extends RecyclerView.Adapter<
         return items.size();
     }
 
-    public void addItem(SuggestedQuestion item) {
-        items.add(item);
-        notifyItemInserted(items.size() - 1);
+    public void setQuestions(List<SuggestedQuestion> list) {
+        items.clear();
+        items.addAll(list);
+        notifyDataSetChanged();
+    }
+
+    // Clear questions list
+    public void clearQuestions() {
+        items.clear();
+        notifyDataSetChanged();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

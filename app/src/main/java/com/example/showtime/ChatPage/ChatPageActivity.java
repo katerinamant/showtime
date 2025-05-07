@@ -39,6 +39,7 @@ import com.openai.models.responses.ResponseCreateParams;
 import com.openai.models.responses.ResponseOutputMessage;
 import com.openai.models.responses.ResponseOutputText;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -79,18 +80,6 @@ public class ChatPageActivity extends AppCompatActivity implements ChatRecyclerV
         setUpHeaderButtons();
 
         setUpRecyclerViews();
-
-        // Add sample suggested questions
-        SuggestedQuestion question = new SuggestedQuestion("What can you do?");
-        questionsRecyclerViewAdapter.addItem(question);
-        question = new SuggestedQuestion("When's the next show?");
-        questionsRecyclerViewAdapter.addItem(question);
-        question = new SuggestedQuestion("What's my reservation code?");
-        questionsRecyclerViewAdapter.addItem(question);
-        question = new SuggestedQuestion("Cancel my reservation");
-        questionsRecyclerViewAdapter.addItem(question);
-        question = new SuggestedQuestion("Change my reservation");
-        questionsRecyclerViewAdapter.addItem(question);
 
         // Set up chat input functionality
         // Enable scrolling in the chat input box
@@ -133,6 +122,7 @@ public class ChatPageActivity extends AppCompatActivity implements ChatRecyclerV
     void waitForBotMsg(UserMessage userPrompt) {
         // Disable send button
         toggleSendButton(false);
+        questionsRecyclerViewAdapter.clearQuestions();
 
         // Have a small delay before showing the "processing..." message
         new Handler().postDelayed(() -> {
@@ -234,6 +224,22 @@ public class ChatPageActivity extends AppCompatActivity implements ChatRecyclerV
                     }
                 }
 
+                List<SuggestedQuestion> questions = new ArrayList<>();
+                // TODO Get suggested questions from model
+                if (true) {
+                    // Add sample suggested questions
+                    SuggestedQuestion question = new SuggestedQuestion("What can you do?");
+                    questions.add(question);
+                    question = new SuggestedQuestion("When's the next show?");
+                    questions.add(question);
+                    question = new SuggestedQuestion("What's my reservation code?");
+                    questions.add(question);
+                    question = new SuggestedQuestion("Cancel my reservation");
+                    questions.add(question);
+                    question = new SuggestedQuestion("Change my reservation");
+                    questions.add(question);
+                }
+
                 mainHandler.post(() -> {
                     // Deletes "processing..." message
                     chatRecyclerViewAdapter.deleteLastItem();
@@ -251,6 +257,7 @@ public class ChatPageActivity extends AppCompatActivity implements ChatRecyclerV
 
                     // Enable send button
                     toggleSendButton(true);
+                    questionsRecyclerViewAdapter.setQuestions(questions);
                 });
             } catch (Exception e) {
                 e.printStackTrace();
