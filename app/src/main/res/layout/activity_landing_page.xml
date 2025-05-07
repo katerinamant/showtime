@@ -103,7 +103,7 @@
         android:elevation="50dp"
         android:fontFamily="@font/inter_regular"
         android:text="@string/prompt_3"
-        android:textAlignment="viewStart"
+        android:textAlignment="center"
         android:textAllCaps="false"
         android:textColor="@color/black"
         android:textSize="14sp"

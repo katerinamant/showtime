@@ -12,9 +12,9 @@
     <string name="booth_img_desc">Ticket booth with ShowTime logo</string>
     <string name="how_can_i_help_you">How can I help you?</string>
     <string name="prompt_1">What can you do?</string>
-    <string name="prompt_2">What are the available shows?</string>
+    <string name="prompt_2">Details and timetable of shows</string>
     <string name="prompt_3">I need help with my reservation</string>
-    <string name="prompt_4">How much does a ticket cost?</string>
+    <string name="prompt_4">Seating options and prices</string>
 
     <!-- Header -->
     <string name="logo_desc">ShowTime logo</string>
