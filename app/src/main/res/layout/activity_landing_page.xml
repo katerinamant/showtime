@@ -40,6 +40,7 @@
         android:layout_height="45dp"
         android:layout_marginTop="10dp"
         android:background="@drawable/edit_text_white"
+        android:drawableEnd="@drawable/icon_sent_lapis"
         android:ems="10"
         android:fontFamily="@font/inter_medium"
         android:hint="@string/hint"
@@ -128,4 +129,5 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btn_prompt_3" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
