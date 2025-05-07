@@ -45,8 +45,9 @@ import java.util.concurrent.CompletableFuture;
 
 public class ChatPageActivity extends AppCompatActivity implements ChatRecyclerViewAdapter.ChatEventListener {
     private ChatPageViewModel viewModel;
-    private RecyclerView recyclerView;
-    private ChatRecyclerViewAdapter recyclerViewAdapter;
+    private RecyclerView chatRecyclerView, questionsRecyclerView;
+    private ChatRecyclerViewAdapter chatRecyclerViewAdapter;
+    private SuggestedQuestionsRecyclerViewAdapter questionsRecyclerViewAdapter;
     private final static ReservationManager reservationManager = new ReservationManager();
 
     // TODO use Google Secret Manager to fetch API key
@@ -77,7 +78,19 @@ public class ChatPageActivity extends AppCompatActivity implements ChatRecyclerV
 
         setUpHeaderButtons();
 
-        setUpRecyclerView();
+        setUpRecyclerViews();
+
+        // Add sample suggested questions
+        SuggestedQuestion question = new SuggestedQuestion("What can you do?");
+        questionsRecyclerViewAdapter.addItem(question);
+        question = new SuggestedQuestion("When's the next show?");
+        questionsRecyclerViewAdapter.addItem(question);
+        question = new SuggestedQuestion("What's my reservation code?");
+        questionsRecyclerViewAdapter.addItem(question);
+        question = new SuggestedQuestion("Cancel my reservation");
+        questionsRecyclerViewAdapter.addItem(question);
+        question = new SuggestedQuestion("Change my reservation");
+        questionsRecyclerViewAdapter.addItem(question);
 
         // Set up chat input functionality
         // Enable scrolling in the chat input box
@@ -96,7 +109,7 @@ public class ChatPageActivity extends AppCompatActivity implements ChatRecyclerV
             userMessage = viewModel.getPresenter().getNewUserMessage(userInput);
 
             // Add new object to RecyclerView and clear input text
-            addToRecyclerView(userMessage);
+            addToChatRecyclerView(userMessage);
             chatInput.setText("");
 
             waitForBotMsg((UserMessage) userMessage);
@@ -105,10 +118,10 @@ public class ChatPageActivity extends AppCompatActivity implements ChatRecyclerV
         setUpClearChatButton();
     }
 
-    void addToRecyclerView(ChatItem item) {
-        // Add new object to RecyclerView and scroll to bottom
-        recyclerViewAdapter.addItem(item);
-        recyclerView.scrollToPosition(recyclerViewAdapter.getItemCount() - 1);
+    void addToChatRecyclerView(ChatItem item) {
+        // Add new object to chat's RecyclerView and scroll to bottom
+        chatRecyclerViewAdapter.addItem(item);
+        chatRecyclerView.scrollToPosition(chatRecyclerViewAdapter.getItemCount() - 1);
     }
 
     void toggleSendButton(boolean state) {
@@ -124,7 +137,7 @@ public class ChatPageActivity extends AppCompatActivity implements ChatRecyclerV
         // Have a small delay before showing the "processing..." message
         new Handler().postDelayed(() -> {
             textMessage = viewModel.getPresenter().getNewTextMessage("processing...");
-            addToRecyclerView(textMessage);
+            addToChatRecyclerView(textMessage);
         }, 400);
 
 
@@ -223,17 +236,17 @@ public class ChatPageActivity extends AppCompatActivity implements ChatRecyclerV
 
                 mainHandler.post(() -> {
                     // Deletes "processing..." message
-                    recyclerViewAdapter.deleteLastItem();
+                    chatRecyclerViewAdapter.deleteLastItem();
 
-                    addToRecyclerView(botMessage);
+                    addToChatRecyclerView(botMessage);
                     if (ticketBanner != null) {
-                        addToRecyclerView(ticketBanner);
+                        addToChatRecyclerView(ticketBanner);
                     }
                     if (botImgMessage != null) {
-                        addToRecyclerView(botImgMessage);
+                        addToChatRecyclerView(botImgMessage);
                     }
                     if (rateBanner != null) {
-                        addToRecyclerView(rateBanner);
+                        addToChatRecyclerView(rateBanner);
                     }
 
                     // Enable send button
@@ -264,17 +277,25 @@ public class ChatPageActivity extends AppCompatActivity implements ChatRecyclerV
         });
     }
 
-    void setUpRecyclerView() {
-        recyclerView = findViewById(R.id.chat_page_recycler_view);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerViewAdapter = new ChatRecyclerViewAdapter(this, this);
-        recyclerView.setAdapter(recyclerViewAdapter);
+    void setUpRecyclerViews() {
+        // Chat recycler view
+        chatRecyclerView = findViewById(R.id.chat_page_recycler_view);
+        chatRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        chatRecyclerViewAdapter = new ChatRecyclerViewAdapter(this, this);
+        chatRecyclerView.setAdapter(chatRecyclerViewAdapter);
 
         // Add user's first message from the LandingPage
         previousResponseId = null; // Ensure that chatbot does not remember previous conversation
         userMessage = viewModel.getPresenter().getNewUserMessage(userInput);
-        recyclerViewAdapter.addItem(userMessage);
+        chatRecyclerViewAdapter.addItem(userMessage);
 
+        // Suggested question recycler view
+        questionsRecyclerView = findViewById(R.id.suggested_questions_recycler_view);
+        questionsRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        questionsRecyclerViewAdapter = new SuggestedQuestionsRecyclerViewAdapter(this);
+        questionsRecyclerView.setAdapter(questionsRecyclerViewAdapter);
+
+        // After set-up, generate response to user's first question
         waitForBotMsg((UserMessage) userMessage);
     }
 
@@ -282,7 +303,7 @@ public class ChatPageActivity extends AppCompatActivity implements ChatRecyclerV
         // Show popup when clear chat button is clicked
         ImageView clearChatBtn = findViewById(R.id.clear_chat_button);
         clearChatBtn.setOnClickListener(v -> {
-            if (recyclerViewAdapter.getItemCount() == 0) return;
+            if (chatRecyclerViewAdapter.getItemCount() == 0) return;
 
             // Inflate the custom layout
             LayoutInflater inflater = LayoutInflater.from(this);
@@ -301,7 +322,7 @@ public class ChatPageActivity extends AppCompatActivity implements ChatRecyclerV
             cancelButton.setOnClickListener(cancel -> dialog.dismiss());
 
             confirmButton.setOnClickListener(confirm -> {
-                recyclerViewAdapter.clearChat();
+                chatRecyclerViewAdapter.clearChat();
                 previousResponseId = null; // Ensure that chatbot does not remember previous conversation
                 dialog.dismiss();
             });
@@ -322,7 +343,7 @@ public class ChatPageActivity extends AppCompatActivity implements ChatRecyclerV
     public void onRating(RatingBar ratingBar, String showName, int rating) {
         @SuppressLint("DefaultLocale") String rating_text = String.format("%d.0 / 5.0", rating);
         // Show popup when rating is selected
-        if (recyclerViewAdapter.getItemCount() == 0) return;
+        if (chatRecyclerViewAdapter.getItemCount() == 0) return;
 
         // Inflate the custom layout
         LayoutInflater inflater = LayoutInflater.from(this);
@@ -349,7 +370,7 @@ public class ChatPageActivity extends AppCompatActivity implements ChatRecyclerV
         confirmButton.setOnClickListener(confirm -> {
             // Show the rating as a user message for UsherBot to respond
             userMessage = viewModel.getPresenter().getNewUserMessage(rating_text);
-            addToRecyclerView(userMessage);
+            addToChatRecyclerView(userMessage);
             waitForBotMsg((UserMessage) userMessage);
 
             // Disable rating bar after confirmed rating
