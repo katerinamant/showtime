@@ -44,7 +44,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
-public class ChatPageActivity extends AppCompatActivity implements ChatRecyclerViewAdapter.ChatEventListener {
+public class ChatPageActivity extends AppCompatActivity implements ChatRecyclerViewAdapter.ChatEventListener, SuggestedQuestionsRecyclerViewAdapter.SuggestedQuestionsListener {
     private ChatPageViewModel viewModel;
     private RecyclerView chatRecyclerView, questionsRecyclerView;
     private ChatRecyclerViewAdapter chatRecyclerViewAdapter;
@@ -299,7 +299,7 @@ public class ChatPageActivity extends AppCompatActivity implements ChatRecyclerV
         // Suggested question recycler view
         questionsRecyclerView = findViewById(R.id.suggested_questions_recycler_view);
         questionsRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-        questionsRecyclerViewAdapter = new SuggestedQuestionsRecyclerViewAdapter(this);
+        questionsRecyclerViewAdapter = new SuggestedQuestionsRecyclerViewAdapter(this, this);
         questionsRecyclerView.setAdapter(questionsRecyclerViewAdapter);
 
         // After set-up, generate response to user's first question
@@ -393,5 +393,10 @@ public class ChatPageActivity extends AppCompatActivity implements ChatRecyclerV
         if (window != null) {
             window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         }
+    }
+
+    @Override
+    public void onSuggestedQuestionClick(SuggestedQuestion suggestedQuestion) {
+        // TODO
     }
 }

@@ -30,9 +30,11 @@ public class SuggestedQuestionsRecyclerViewAdapter extends RecyclerView.Adapter<
 
     private final List<SuggestedQuestion> items = new ArrayList<>();
     private final Context context;
+    private final SuggestedQuestionsListener listener;
 
-    public SuggestedQuestionsRecyclerViewAdapter(Context context) {
+    public SuggestedQuestionsRecyclerViewAdapter(Context context, SuggestedQuestionsListener listener) {
         this.context = context;
+        this.listener = listener;
     }
 
     @NonNull
@@ -40,15 +42,14 @@ public class SuggestedQuestionsRecyclerViewAdapter extends RecyclerView.Adapter<
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(context);
         View view = inflater.inflate(R.layout.list_item_question, parent, false);
-        return new ViewHolder(view);
+        return new ViewHolder(view, listener);
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         final SuggestedQuestion question = items.get(position);
-        String question_text = question.getQuestion();
 
-        ((SuggestedQuestionsRecyclerViewAdapter.ViewHolder) holder).question.setText(question_text);
+        ((SuggestedQuestionsRecyclerViewAdapter.ViewHolder) holder).setSuggestedQuestion(question);
     }
 
     @Override
@@ -68,12 +69,33 @@ public class SuggestedQuestionsRecyclerViewAdapter extends RecyclerView.Adapter<
         notifyDataSetChanged();
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
-        public final TextView question;
+    public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        private final SuggestedQuestionsListener listener;
+        private SuggestedQuestion suggestedQuestion;
+        public final TextView questionText;
 
-        public ViewHolder(@NonNull View view) {
+        public ViewHolder(@NonNull View view, SuggestedQuestionsListener listener) {
             super(view);
-            this.question = view.findViewById(R.id.question_text);
+            this.listener = listener;
+
+            this.questionText = view.findViewById(R.id.question_text);
         }
+
+        public void setSuggestedQuestion(SuggestedQuestion suggestedQuestion) {
+            this.suggestedQuestion = suggestedQuestion;
+            questionText.setText(suggestedQuestion.getQuestion());
+        }
+
+        @Override
+        public void onClick(View v) {
+            listener.onSuggestedQuestionClick(this.suggestedQuestion);
+        }
+    }
+
+    /**
+     * Define an interface in order to pass events to the ChatPageActivity.
+     */
+    public interface SuggestedQuestionsListener {
+        void onSuggestedQuestionClick(SuggestedQuestion suggestedQuestion);
     }
 }
