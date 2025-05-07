@@ -1,5 +1,6 @@
 package com.example.showtime.ChatPage;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -11,6 +12,8 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RatingBar;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,19 +22,43 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.showtime.ChatItem.ChatItem;
+import com.example.showtime.ChatItem.UserMessage;
 import com.example.showtime.HelpPage.HelpPageActivity;
 import com.example.showtime.LandingPage.LandingPageActivity;
 import com.example.showtime.R;
+import com.example.showtime.Reservation.Reservation;
+import com.example.showtime.Reservation.ReservationManager;
+import com.example.showtime.Utils.ResponseJSON;
 import com.example.showtime.Utils.Utils;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.openai.client.OpenAIClientAsync;
+import com.openai.client.okhttp.OpenAIOkHttpClientAsync;
+import com.openai.models.ChatModel;
+import com.openai.models.responses.Response;
+import com.openai.models.responses.ResponseCreateParams;
+import com.openai.models.responses.ResponseOutputMessage;
+import com.openai.models.responses.ResponseOutputText;
 
-public class ChatPageActivity extends AppCompatActivity {
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+
+public class ChatPageActivity extends AppCompatActivity implements ChatRecyclerViewAdapter.ChatEventListener {
     private ChatPageViewModel viewModel;
     private RecyclerView recyclerView;
     private ChatRecyclerViewAdapter recyclerViewAdapter;
-    String userInput;
-    ChatItem userMessage, botMessage, textMessage;
+    private final static ReservationManager reservationManager = new ReservationManager();
+
+    // TODO use Google Secret Manager to fetch API key
+    OpenAIClientAsync client = OpenAIOkHttpClientAsync.builder()
+            .apiKey("myKey")
+            .build();
+
+    ChatItem userMessage, botMessage, textMessage, ticketBanner, botImgMessage, rateBanner;
     ImageView sendBtn;
+    String userInput;
+    String previousResponseId;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,7 +99,7 @@ public class ChatPageActivity extends AppCompatActivity {
             addToRecyclerView(userMessage);
             chatInput.setText("");
 
-            waitForBotMsg();
+            waitForBotMsg((UserMessage) userMessage);
         });
 
         setUpClearChatButton();
@@ -90,7 +117,7 @@ public class ChatPageActivity extends AppCompatActivity {
         sendBtn.setAlpha(0.5f + 0.5f * (state ? 1 : 0));
     }
 
-    void waitForBotMsg() {
+    void waitForBotMsg(UserMessage userPrompt) {
         // Disable send button
         toggleSendButton(false);
 
@@ -100,20 +127,123 @@ public class ChatPageActivity extends AppCompatActivity {
             addToRecyclerView(textMessage);
         }, 400);
 
-        // Create botMessage object
-        // TODO Get actual bot message
-        botMessage = viewModel.getPresenter().getNewBotMessage("Yes.");
 
-        // Delay based on text's length, remove the "processing..." message and show the bot message
-        // TODO Delay based on text's length (if actual delay from retrieving the message is not enough)
-        new Handler().postDelayed(() -> {
-            recyclerViewAdapter.deleteLastItem();
+        // Query OpenAI
+        ResponseCreateParams params;
+        if (previousResponseId == null || previousResponseId.isEmpty()) {
+            // For first-time messages, don't include previousBotResponseId
+            params = ResponseCreateParams.builder()
+                    .instructions(Utils.MODEL_CONTEXT + reservationManager.toJson() + "\n" + "\"\n}") // append latest up to date reservations list
+                    .input(userPrompt.getMessage())
+                    .model(ChatModel.GPT_4_1_2025_04_14)
+                    .build();
+        } else {
+            // For messages in a running conversation, include previousBotResponseId
+            params = ResponseCreateParams.builder()
+                    .instructions(Utils.MODEL_CONTEXT + reservationManager.toJson() + "\n" + "\"\n}") // append latest up to date reservations list
+                    .previousResponseId(previousResponseId)
+                    .input(userPrompt.getMessage())
+                    .model(ChatModel.GPT_4_1_2025_04_14)
+                    .build();
+        }
+        CompletableFuture<Response> responseFuture = client.responses().create(params);
 
-            addToRecyclerView(botMessage);
+        // Set up handler
+        Handler mainHandler = new Handler();
 
-            // Enable send button
-            toggleSendButton(true);
-        }, 5000);
+        // Parse model response
+        responseFuture.thenAccept(response -> {
+            try {
+                if (response.error().isPresent()) {
+                    throw new RuntimeException(response.error().toString());
+                }
+
+                if (response.output().isEmpty()) {
+                    throw new RuntimeException("Model response output field is empty: " + response);
+                }
+
+                // TODO don't get the first one rather the one which has the field "type": "output_text"
+                Optional<ResponseOutputMessage> outputMessageJson = response.output().get(0).message();
+                if (!outputMessageJson.isPresent()) {
+                    throw new RuntimeException("Model returned no output: " + response);
+                }
+
+                List<ResponseOutputMessage.Content> outputMessageContent = outputMessageJson.get().content();
+                if (outputMessageContent.isEmpty()) {
+                    throw new RuntimeException("Model returned empty response: " + response);
+                }
+
+                // Extract the actual text from the output
+                String modelRawResponse = outputMessageContent.get(0)
+                        .outputText()
+                        .map(ResponseOutputText::text)
+                        .orElse("{\"message\": \"I didn't quite understand that, can you ask again?\", \"intent\": null, \"reservation\": null}");
+
+                ResponseJSON responseJSON = ResponseJSON.fromJson(modelRawResponse);
+
+                previousResponseId = response.id();
+                botMessage = viewModel.getPresenter().getNewBotMessage(responseJSON.getMessage().orElse("I didn't quite understand that, can you ask again?"));
+                ticketBanner = null;
+                botImgMessage = null;
+                rateBanner = null;
+
+                if (responseJSON.getIntent().isPresent() && responseJSON.getReservation().isPresent()) {
+                    String intent = responseJSON.getIntent().get().toLowerCase();
+                    Reservation reservation = responseJSON.getReservation().get();
+                    switch (intent) {
+                        case "new":
+                            reservationManager.addReservation(reservation.getReservationCode(), reservation);
+                            ticketBanner = viewModel.getPresenter().getNewTicketBanner(reservation);
+                            break;
+                        case "cancel":
+                            reservationManager.deleteReservation(reservation.getReservationCode());
+                            break;
+                        case "change":
+                            reservationManager.updateReservation(reservation.getReservationCode(), reservation);
+                            ticketBanner = viewModel.getPresenter().getNewTicketBanner(reservation);
+                            break;
+                    }
+                }
+
+                // If the model has responded with both a ticket banner and a show extra instruction,
+                // always prefer to show the ticket banner and skip the images.
+                if (ticketBanner == null && responseJSON.getShowExtraValue().isPresent()) {
+                    String showExtraValue = responseJSON.getShowExtraValue().get().toLowerCase();
+                    switch (showExtraValue) {
+                        case "seating_chart":
+                            int resourceId = R.drawable.seating_chart;
+                            botImgMessage = viewModel.getPresenter().getNewBotImageMessage(resourceId);
+                            break;
+                        case "rate":
+                            Reservation reservation = responseJSON.getReservation().get();
+                            rateBanner = viewModel.getPresenter().getNewRateBanner(reservation);
+                            break;
+                    }
+                }
+
+                mainHandler.post(() -> {
+                    // Deletes "processing..." message
+                    recyclerViewAdapter.deleteLastItem();
+
+                    addToRecyclerView(botMessage);
+                    if (ticketBanner != null) {
+                        addToRecyclerView(ticketBanner);
+                    }
+                    if (botImgMessage != null) {
+                        addToRecyclerView(botImgMessage);
+                    }
+                    if (rateBanner != null) {
+                        addToRecyclerView(rateBanner);
+                    }
+
+                    // Enable send button
+                    toggleSendButton(true);
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
+                botMessage = viewModel.getPresenter().getNewBotMessage("I didn't quite understand that, can you ask again?");
+            }
+        });
     }
 
     void setUpHeaderButtons() {
@@ -137,14 +267,15 @@ public class ChatPageActivity extends AppCompatActivity {
     void setUpRecyclerView() {
         recyclerView = findViewById(R.id.chat_page_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerViewAdapter = new ChatRecyclerViewAdapter(this);
+        recyclerViewAdapter = new ChatRecyclerViewAdapter(this, this);
         recyclerView.setAdapter(recyclerViewAdapter);
 
         // Add user's first message from the LandingPage
+        previousResponseId = null; // Ensure that chatbot does not remember previous conversation
         userMessage = viewModel.getPresenter().getNewUserMessage(userInput);
         recyclerViewAdapter.addItem(userMessage);
 
-        waitForBotMsg();
+        waitForBotMsg((UserMessage) userMessage);
     }
 
     void setUpClearChatButton() {
@@ -171,6 +302,7 @@ public class ChatPageActivity extends AppCompatActivity {
 
             confirmButton.setOnClickListener(confirm -> {
                 recyclerViewAdapter.clearChat();
+                previousResponseId = null; // Ensure that chatbot does not remember previous conversation
                 dialog.dismiss();
             });
 
@@ -183,5 +315,55 @@ public class ChatPageActivity extends AppCompatActivity {
                 window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             }
         });
+    }
+
+    // ItemSelectionListener implementation
+    @Override
+    public void onRating(RatingBar ratingBar, String showName, int rating) {
+        @SuppressLint("DefaultLocale") String rating_text = String.format("%d.0 / 5.0", rating);
+        // Show popup when rating is selected
+        if (recyclerViewAdapter.getItemCount() == 0) return;
+
+        // Inflate the custom layout
+        LayoutInflater inflater = LayoutInflater.from(this);
+        View popupView = inflater.inflate(R.layout.popup_confirm_rating, null);
+
+        // Create the dialog
+        AlertDialog dialog = new MaterialAlertDialogBuilder(this)
+                .setView(popupView)
+                .create();
+        dialog.setCanceledOnTouchOutside(false);
+
+        // Set up text
+        TextView showNameTxt = popupView.findViewById(R.id.rating_showName);
+        showNameTxt.setText(showName);
+        TextView ratingTxt = popupView.findViewById(R.id.rating_score);
+        ratingTxt.setText(rating_text);
+
+        // Set up the buttons inside the popup
+        Button cancelButton = popupView.findViewById(R.id.btn_cancel_rating);
+        Button confirmButton = popupView.findViewById(R.id.btn_confirm_rating);
+
+        cancelButton.setOnClickListener(cancel -> dialog.dismiss());
+
+        confirmButton.setOnClickListener(confirm -> {
+            // Show the rating as a user message for UsherBot to respond
+            userMessage = viewModel.getPresenter().getNewUserMessage(rating_text);
+            addToRecyclerView(userMessage);
+            waitForBotMsg((UserMessage) userMessage);
+
+            // Disable rating bar after confirmed rating
+            ratingBar.setIsIndicator(true);
+            dialog.dismiss();
+        });
+
+        // Show the dialog
+        dialog.show();
+
+        // Force dialog to match parent width
+        Window window = dialog.getWindow();
+        if (window != null) {
+            window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        }
     }
 }

@@ -14,12 +14,12 @@
         android:layout_height="wrap_content">
 
         <TextView
-            android:id="@+id/clear_chat_title"
+            android:id="@+id/confirm_rating_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:fontFamily="@font/inter_extrabold"
-            android:text="@string/clear_chat_title"
+            android:text="@string/confirm_rating_title"
             android:textAlignment="center"
             android:textColor="@color/coral"
             android:textSize="28sp"
@@ -28,25 +28,53 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/clear_chat_desc"
+            android:id="@+id/rating_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="10dp"
             android:fontFamily="@font/inter_semibold"
-            android:text="@string/clear_chat_desc"
+            android:text="@string/rating_title"
             android:textAlignment="center"
             android:textColor="@color/black"
             android:textSize="15sp"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/clear_chat_title" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/confirm_rating_title" />
+
+        <TextView
+            android:id="@+id/rating_showName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:fontFamily="@font/inter_bold"
+            android:text="@string/na"
+            android:textAlignment="center"
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/rating_title" />
+
+        <TextView
+            android:id="@+id/rating_score"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:fontFamily="@font/inter_bold"
+            android:text="@string/na"
+            android:textAlignment="center"
+            android:textColor="@color/coral"
+            android:textSize="15sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/rating_showName" />
 
         <Button
-            android:id="@+id/btn_cancel_clear_chat"
+            android:id="@+id/btn_cancel_rating"
             android:layout_width="144dp"
             android:layout_height="56dp"
             android:layout_marginStart="20dp"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="15dp"
             android:layout_marginBottom="12dp"
             android:backgroundTint="@color/white"
             android:fontFamily="@font/inter_semibold"
@@ -57,15 +85,15 @@
             app:cornerRadius="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/clear_chat_desc"
+            app:layout_constraintTop_toBottomOf="@+id/rating_score"
             app:strokeColor="@color/coral"
             app:strokeWidth="1dp" />
 
         <Button
-            android:id="@+id/btn_confirm_clear_chat"
+            android:id="@+id/btn_confirm_rating"
             android:layout_width="144dp"
             android:layout_height="56dp"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="15dp"
             android:layout_marginEnd="20dp"
             android:backgroundTint="@color/white"
             android:fontFamily="@font/inter_semibold"
@@ -76,8 +104,8 @@
             app:cornerRadius="8dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.867"
-            app:layout_constraintStart_toEndOf="@+id/btn_cancel_clear_chat"
-            app:layout_constraintTop_toBottomOf="@+id/clear_chat_desc"
+            app:layout_constraintStart_toEndOf="@+id/btn_cancel_rating"
+            app:layout_constraintTop_toBottomOf="@+id/rating_score"
             app:strokeColor="@color/coral"
             app:strokeWidth="1dp" />
 
