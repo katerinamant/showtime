@@ -228,21 +228,8 @@ public class ChatPageActivity extends AppCompatActivity implements ItemSelection
                     }
                 }
 
-                List<SuggestedQuestion> questions = new ArrayList<>();
-                // TODO Get suggested questions from model
-                if (true) {
-                    // Add sample suggested questions
-                    SuggestedQuestion question = new SuggestedQuestion("What can you do?");
-                    questions.add(question);
-                    question = new SuggestedQuestion("When's the next show?");
-                    questions.add(question);
-                    question = new SuggestedQuestion("What's my reservation code?");
-                    questions.add(question);
-                    question = new SuggestedQuestion("Cancel my reservation");
-                    questions.add(question);
-                    question = new SuggestedQuestion("Change my reservation");
-                    questions.add(question);
-                }
+                // Get suggested questions from the model
+                List<SuggestedQuestion> questions = responseJSON.getSuggestedQuestions();
 
                 // Update chat
                 mainHandler.post(() -> {

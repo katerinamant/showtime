@@ -4,18 +4,22 @@ import com.example.showtime.Reservation.Reservation;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.util.List;
+import java.util.ArrayList;
 import java.util.Optional;
 
 public class ResponseJSON {
     private final Optional<String> message;
     private final Optional<String> intent, showExtra;
     private final Optional<Reservation> reservation;
+    private final List<SuggestedQuestion> suggestedQuestions;
 
-    public ResponseJSON(Optional<String> message, Optional<String> intent, Optional<String> showExtra, Optional<Reservation> reservation) {
+    public ResponseJSON(Optional<String> message, Optional<String> intent, Optional<String> showExtra, Optional<Reservation> reservation, List<SuggestedQuestion> suggestedQuestions) {
         this.message = message;
         this.intent = intent;
         this.showExtra = showExtra;
         this.reservation = reservation;
+        this.suggestedQuestions = suggestedQuestions;
     }
 
     public Optional<String> getMessage() {
@@ -32,6 +36,10 @@ public class ResponseJSON {
 
     public Optional<Reservation> getReservation() {
         return reservation;
+    }
+
+    public List<SuggestedQuestion> getSuggestedQuestions() {
+        return suggestedQuestions;
     }
 
     private static Optional<String> optionalNonEmptyText(JsonNode node, String fieldName) {
@@ -60,7 +68,17 @@ public class ResponseJSON {
                 reservation = Optional.of(Reservation.fromJson(reservationJson));
             }
 
-            return new ResponseJSON(message, intent, showExtra, reservation);
+            List<SuggestedQuestion> suggestedQuestions = new ArrayList<>();
+            if (node.has("suggestedQuestions") && node.get("suggestedQuestions").isArray()) {
+                for (JsonNode questionNode : node.get("suggestedQuestions")) {
+                    if (questionNode.isTextual()) {
+                        String question = questionNode.asText();
+                        suggestedQuestions.add(new SuggestedQuestion(question));
+                    }
+                }
+            }
+
+            return new ResponseJSON(message, intent, showExtra, reservation, suggestedQuestions);
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException("Failed to deserialize JSON to ReservationJSONObject", e);
