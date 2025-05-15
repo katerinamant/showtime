@@ -61,6 +61,7 @@ public class ChatPageActivity extends AppCompatActivity implements ItemSelection
             .build();
 
     ChatItem userMessage, botMessage, textMessage, ticketBanner, botImgMessage, rateBanner;
+    List<SuggestedQuestion> questions;
     ImageView sendBtn;
     String userInput;
     String previousResponseId;
@@ -229,8 +230,13 @@ public class ChatPageActivity extends AppCompatActivity implements ItemSelection
                 }
 
                 // Get suggested questions from the model
-                List<SuggestedQuestion> questions = responseJSON.getSuggestedQuestions();
+                questions = responseJSON.getSuggestedQuestions();
 
+            } catch (Exception e) {
+                e.printStackTrace();
+                botMessage = viewModel.getPresenter().getNewBotMessage("I didn't quite understand that, can you ask again?");
+                questions = new ArrayList<>();
+            } finally {
                 // Update chat
                 mainHandler.post(() -> {
                     // Deletes "processing..." message
@@ -253,9 +259,6 @@ public class ChatPageActivity extends AppCompatActivity implements ItemSelection
                     // Show new suggested questions
                     questionsRecyclerViewAdapter.setQuestions(questions);
                 });
-            } catch (Exception e) {
-                e.printStackTrace();
-                botMessage = viewModel.getPresenter().getNewBotMessage("I didn't quite understand that, can you ask again?");
             }
         });
     }

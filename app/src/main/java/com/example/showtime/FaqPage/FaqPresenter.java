@@ -32,7 +32,7 @@ public class FaqPresenter {
 
                 faq = new Faq();
                 faq.setQuestion("I need accessible seating. Can UsherBot help me?");
-                faq.setAnswer("Absolutely. Just let UsherBot know you need accessible seating, and it will reserve your seats in the designated seating area -one seat for you and one for a companion.");
+                faq.setAnswer("Absolutely. Just let UsherBot know you need accessible seating, and it will reserve your seats in the designated seating area -one seat for you and one for a companion. There's also a dedicated accessible entrance closer to those seats.");
                 res.add(faq);
 
                 faq = new Faq();

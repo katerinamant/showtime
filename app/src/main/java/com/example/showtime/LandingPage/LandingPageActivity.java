@@ -64,6 +64,7 @@ public class LandingPageActivity extends AppCompatActivity {
 
                         // Add user input to intent
                         String user_input = landing_page_edit_txt.getText().toString().trim();
+                        if (user_input.isEmpty()) return false;
                         intent.putExtra("user_input", user_input);
                         startActivity(intent);
                         return true;
