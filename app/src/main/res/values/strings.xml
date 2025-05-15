@@ -35,6 +35,7 @@
     <string name="res_name">Reservation Name</string>
     <string name="amount_title">Outstanding amount:</string>
     <string name="amount">amount</string>
+    <string name="connect_me_to_support">Connect me to a support expert</string>
 
     <!-- Help Page -->
     <string name="call_center_title">Call Center</string>
