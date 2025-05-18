@@ -20,9 +20,12 @@ public class Utils {
             "{\"reservationCode\": \"Z0Z0\", \"phoneNumber\": \"6900123123\", \"customerName\": \"John Doe\", \"show\": \"Peter Pan\", \"date\": \"29/05/2024\", \"time\": \"5:00PM\", \"ticketNum\": 3, \"section\": \"red\"}\n" +
             "\n" +
             "# IMPORTANT Rules\n" +
+            "- **Always** return all responses in the given JSON format below. " +
             "- Only handle one reservation at a time. If the user has a complex request (e.g., mixed-section bookings or multiple reservations), kindly refer them to customer support.\n" +
             "- A single reservation must never include tickets from more than one section. Reject such requests and suggest only full-section alternatives.\n" +
-            "- If continuing would violate any of these important rules and the following instructions, politely explain that the request is outside your capabilities and redirect the user to our support line. Do not add further information.\n" +
+            "- If continuing with the user's request would violate any of these rules, politely explain that the request is outside your capabilities and redirect the user to our support line. " +
+            "In these cases, also set \"intent\": \"help\" in your JSON response, so the developer can assist the user with a contact option. " +
+            "Do not include reservation data, and do not continue the conversation." +
             "\n" +
             "# Instructions\n" +
             "* Always validate the user's reservation one time in a conversation stream before performing any action on it.\n" +
@@ -62,12 +65,18 @@ public class Utils {
             "```json\n" +
             "{\n" +
             "\"message\": \"Your message to the user\", \n" +
-            "\"intent\": \"new\" | \"cancel\" | \"change\" | null, \n" +
+            "\"intent\": \"new\" | \"cancel\" | \"change\" | \"help\" | null, \n" +
             "\"showExtra\": \"seating_chart\" | \"rate\" | null, \n" +
             "\"reservation\": {...}, // Matches Reservation Object Example Structure \n" +
             "\"suggestedQuestions\": [\"...\"] // Always include 4-5 context-relevant, FAQ-compliant suggestions of what the user will ask \n" +
             "}\n" +
             "```\n"+
+            "* Set `\"intent\": \"help\"`:\n" +
+            "   - Only when you are about to tell the user that their request is not supported and they need to contact our customer support line.\n" +
+            "   - Use \"help\" to allow the developer to show a \"Contact Support\" button or similar UI element.\n" +
+            "   - Do not use \"help\" unless you are ending the conversation due to an unsupported or disallowed request.\n" +
+            "   - Still provide appropriate \"suggestedQuestions\" where possible (e.g., “How do I book a ticket?”).\n"+
+            "\n" +
             "* Use `\"showExtra\": \"seating_chart\"` only when:\n" +
             "   - You **independently** determine it improves the user's understanding of seat layout and the conversation involves picking or discussing seating sections.\n" +
             "   - **NEVER** ask the user if they want to see a seating chart.\n" +

@@ -195,21 +195,29 @@ public class ChatPageActivity extends AppCompatActivity implements ItemSelection
                 botImgMessage = null;
                 rateBanner = null;
 
-                if (responseJSON.getIntent().isPresent() && responseJSON.getReservation().isPresent()) {
+                if (responseJSON.getIntent().isPresent()) {
                     String intent = responseJSON.getIntent().get().toLowerCase();
-                    Reservation reservation = responseJSON.getReservation().get();
-                    switch (intent) {
-                        case "new":
-                            reservationManager.addReservation(reservation.getReservationCode(), reservation);
-                            ticketBanner = viewModel.getPresenter().getNewTicketBanner(reservation);
-                            break;
-                        case "cancel":
-                            reservationManager.deleteReservation(reservation.getReservationCode());
-                            break;
-                        case "change":
-                            reservationManager.updateReservation(reservation.getReservationCode(), reservation);
-                            ticketBanner = viewModel.getPresenter().getNewTicketBanner(reservation);
-                            break;
+                    // Show help button
+                    if (intent.equals("help")) {
+                        questionsRecyclerViewAdapter.setShowHelpButton(true);
+                    }
+
+                    // Handle reservation related actions
+                    if (responseJSON.getIntent().isPresent() && responseJSON.getReservation().isPresent()) {
+                        Reservation reservation = responseJSON.getReservation().get();
+                        switch (intent) {
+                            case "new":
+                                reservationManager.addReservation(reservation.getReservationCode(), reservation);
+                                ticketBanner = viewModel.getPresenter().getNewTicketBanner(reservation);
+                                break;
+                            case "cancel":
+                                reservationManager.deleteReservation(reservation.getReservationCode());
+                                break;
+                            case "change":
+                                reservationManager.updateReservation(reservation.getReservationCode(), reservation);
+                                ticketBanner = viewModel.getPresenter().getNewTicketBanner(reservation);
+                                break;
+                        }
                     }
                 }
 
@@ -404,5 +412,10 @@ public class ChatPageActivity extends AppCompatActivity implements ItemSelection
         addToChatRecyclerView(userMessage);
 
         waitForBotMsg((UserMessage) userMessage);
+    }
+
+    @Override
+    public void onHelpButtonClick() {
+        // TODO
     }
 }

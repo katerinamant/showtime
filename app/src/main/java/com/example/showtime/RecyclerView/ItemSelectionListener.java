@@ -18,4 +18,10 @@ public interface ItemSelectionListener {
      *
      */
     void onSuggestedQuestionClick(SuggestedQuestion suggestedQuestion);
+
+    /**
+     * Add customer support to the chat.
+     *
+     */
+    void onHelpButtonClick();
 }
