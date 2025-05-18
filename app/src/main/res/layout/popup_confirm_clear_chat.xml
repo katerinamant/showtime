@@ -71,7 +71,7 @@
             android:fontFamily="@font/inter_semibold"
             android:text="@string/confirm"
             android:textAllCaps="false"
-            android:textColor="@color/black"
+            android:textColor="@color/coral"
             android:textSize="20sp"
             app:cornerRadius="8dp"
             app:layout_constraintEnd_toEndOf="parent"
