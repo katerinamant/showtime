@@ -65,6 +65,7 @@ public class ChatPageActivity extends AppCompatActivity implements ItemSelection
     ImageView sendBtn;
     String userInput;
     String previousResponseId;
+    boolean supportHasJoined = false;
 
 
     @Override
@@ -106,7 +107,11 @@ public class ChatPageActivity extends AppCompatActivity implements ItemSelection
             addToChatRecyclerView(userMessage);
             chatInput.setText("");
 
-            waitForBotMsg((UserMessage) userMessage);
+            // Do not send the mssage to the bot,
+            // if support has joined the chat.
+            if (!supportHasJoined) {
+                waitForBotMsg((UserMessage) userMessage);
+            }
         });
 
         setUpClearChatButton();
@@ -125,7 +130,7 @@ public class ChatPageActivity extends AppCompatActivity implements ItemSelection
     }
 
     void waitForBotMsg(UserMessage userPrompt) {
-        // Disable send button
+        // Disable send button and clear suggested questions
         toggleSendButton(false);
         questionsRecyclerViewAdapter.clearQuestions();
 
@@ -336,6 +341,7 @@ public class ChatPageActivity extends AppCompatActivity implements ItemSelection
             confirmButton.setOnClickListener(confirm -> {
                 chatRecyclerViewAdapter.clearChat();
                 previousResponseId = null; // Ensure that chatbot does not remember previous conversation
+                supportHasJoined = false;
                 dialog.dismiss();
             });
 
@@ -416,6 +422,30 @@ public class ChatPageActivity extends AppCompatActivity implements ItemSelection
 
     @Override
     public void onHelpButtonClick() {
-        // TODO
+        // Show a "processing..." message with a small delay
+        new Handler().postDelayed(() -> {
+            questionsRecyclerViewAdapter.clearQuestions();
+            textMessage = viewModel.getPresenter().getNewTextMessage("processing...");
+            addToChatRecyclerView(textMessage);
+
+            // Have a longer delay before showing the John text
+            // (total delay is 3400 with the processing message delay)
+            new Handler().postDelayed(() -> {
+                chatRecyclerViewAdapter.deleteLastItem();
+
+                textMessage = viewModel.getPresenter().getNewTextMessage("John has joined the chat");
+                addToChatRecyclerView(textMessage);
+
+                // Have another small delay before showing a default bot message
+                new Handler().postDelayed(() -> {
+                    botMessage = viewModel.getPresenter().getNewBotMessage(
+                            "Feel free to continue explaining your request—they can see everything we’ve already discussed and will get you squared away!"
+                    );
+                    addToChatRecyclerView(botMessage);
+                    supportHasJoined = true;
+                }, 400);
+
+            }, 3000);
+        }, 400);
     }
 }
