@@ -26,6 +26,7 @@
     <string name="clear_chat_desc">Wipes the chat clean, but don’t worry — your reservations and other actions are safe.</string>
     <string name="confirm_rating_title">Confirm rating?</string>
     <string name="rating_title">You rated</string>
+    <string name="bubble_desc">typing bubble…</string>
 
     <!-- Banners -->
     <string name="res_code">Reservation Code</string>

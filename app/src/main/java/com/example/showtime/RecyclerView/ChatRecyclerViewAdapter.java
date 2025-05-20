@@ -1,5 +1,6 @@
 package com.example.showtime.RecyclerView;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.text.SpannableString;
@@ -127,6 +128,7 @@ public class ChatRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
     }
 
     // Clear messages list
+    @SuppressLint("NotifyDataSetChanged")
     public void clearChat() {
         chatItems.clear();
         notifyDataSetChanged();

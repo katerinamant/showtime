@@ -1,5 +1,6 @@
 package com.example.showtime.RecyclerView;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -77,6 +78,7 @@ public class SuggestedQuestionsRecyclerViewAdapter extends RecyclerView.Adapter<
     }
 
     // Update questions list
+    @SuppressLint("NotifyDataSetChanged")
     public void setQuestions(List<SuggestedQuestion> list) {
         items.clear();
         items.addAll(list);
@@ -84,6 +86,7 @@ public class SuggestedQuestionsRecyclerViewAdapter extends RecyclerView.Adapter<
     }
 
     // Clear questions list
+    @SuppressLint("NotifyDataSetChanged")
     public void clearQuestions() {
         items.clear();
         showHelpButton = false;
