@@ -9,8 +9,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.showtime.Utils.SuggestedQuestion;
 import com.example.showtime.R;
+import com.example.showtime.Utils.SuggestedQuestion;
 
 import java.util.ArrayList;
 import java.util.List;
