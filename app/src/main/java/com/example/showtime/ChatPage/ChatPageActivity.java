@@ -55,7 +55,6 @@ public class ChatPageActivity extends AppCompatActivity implements ItemSelection
     private SuggestedQuestionsRecyclerViewAdapter questionsRecyclerViewAdapter;
     private final static ReservationManager reservationManager = new ReservationManager();
 
-    // TODO use Google Secret Manager to fetch API key
     OpenAIClientAsync client = OpenAIOkHttpClientAsync.builder()
             .apiKey("myKey")
             .build();
@@ -175,7 +174,6 @@ public class ChatPageActivity extends AppCompatActivity implements ItemSelection
                     throw new RuntimeException("Model response output field is empty: " + response);
                 }
 
-                // TODO don't get the first one rather the one which has the field "type": "output_text"
                 Optional<ResponseOutputMessage> outputMessageJson = response.output().get(0).message();
                 if (!outputMessageJson.isPresent()) {
                     throw new RuntimeException("Model returned no output: " + response);
@@ -433,7 +431,8 @@ public class ChatPageActivity extends AppCompatActivity implements ItemSelection
             new Handler().postDelayed(() -> {
                 chatRecyclerViewAdapter.deleteLastItem();
 
-                textMessage = viewModel.getPresenter().getNewTextMessage("John has joined the chat");
+                String text = "**John** has joined the chat";
+                textMessage = viewModel.getPresenter().getNewTextMessage(text);
                 addToChatRecyclerView(textMessage);
 
                 // Have another small delay before showing a default bot message

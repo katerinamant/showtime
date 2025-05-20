@@ -1,6 +1,11 @@
 package com.example.showtime.RecyclerView;
 
 import android.content.Context;
+import android.graphics.Typeface;
+import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.style.StyleSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +30,8 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ChatRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -125,6 +132,34 @@ public class ChatRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
         notifyDataSetChanged();
     }
 
+    private static SpannableStringBuilder formatMarkdown(String msg) {
+        SpannableStringBuilder builder = new SpannableStringBuilder();
+
+        Pattern pattern = Pattern.compile("(\\*\\*[^*]+\\*\\*|\\*[^*]+\\*)");
+        Matcher matcher = pattern.matcher(msg);
+
+        int lastEnd = 0;
+        while (matcher.find()) {
+            // Add plain text before the matched part
+            builder.append(msg.substring(lastEnd, matcher.start()));
+
+            String match = matcher.group();
+            boolean isBold = match.startsWith("**");
+
+            String innerText = match.substring(isBold ? 2 : 1, match.length() - (isBold ? 2 : 1));
+            SpannableString span = new SpannableString(innerText);
+            span.setSpan(new StyleSpan(isBold ? Typeface.BOLD : Typeface.ITALIC), 0, innerText.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+            builder.append(span);
+
+            lastEnd = matcher.end();
+        }
+
+        // Append remaining text
+        builder.append(msg.substring(lastEnd));
+        return builder;
+    }
+
     // --- ViewHolder classes ---
 
     static class UserViewHolder extends RecyclerView.ViewHolder {
@@ -149,7 +184,7 @@ public class ChatRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
         }
 
         public void bind(BotMessage msg) {
-            textView.setText(msg.getMessage());
+            textView.setText(formatMarkdown(msg.getMessage()));
         }
     }
 
@@ -162,7 +197,7 @@ public class ChatRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
         }
 
         public void bind(TextMessage msg) {
-            textView.setText(msg.getMessage());
+            textView.setText(formatMarkdown(msg.getMessage()));
         }
     }
 
