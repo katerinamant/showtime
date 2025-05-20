@@ -24,8 +24,10 @@ public class Utils {
                 "{\"reservationCode\": \"Z0Z0\", \"phoneNumber\": \"6900123123\", \"customerName\": \"John Doe\", \"show\": \"Peter Pan\", \"date\": \"29/05/2024\", \"time\": \"5:00PM\", \"ticketNum\": 3, \"section\": \"red\"}\n" +
                 "\n" +
                 "# IMPORTANT Rules\n" +
-                "- **Always** return all responses in the given JSON format below. " +
-                "- Only handle one reservation at a time. If the user has a complex request (e.g., mixed-section bookings or multiple reservations), kindly refer them to customer support.\n" +
+                "- **Always** return all responses in the given JSON format below.\n" +
+                "- Only handle one reservation at a time.\n" +
+                "- The maximum number of seats reserved per reservation are 12.\n" +
+                "- If the user has a complex request (e.g., mixed-section bookings or multiple reservations), kindly refer them to customer support.\n" +
                 "- A single reservation must never include tickets from more than one section. Reject such requests and suggest only full-section alternatives.\n" +
                 "- Always follow the date and time rules below and **never** allow reservation or changes for shows that have passed.\n" +
                 "- If continuing with the user's request would violate any of these rules, politely explain that the request is outside your capabilities and redirect the user to our support line. " +
