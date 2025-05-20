@@ -50,7 +50,7 @@ import java.util.concurrent.CompletableFuture;
 
 public class ChatPageActivity extends AppCompatActivity implements ItemSelectionListener {
     private ChatPageViewModel viewModel;
-    private RecyclerView chatRecyclerView, questionsRecyclerView;
+    private RecyclerView chatRecyclerView;
     private ChatRecyclerViewAdapter chatRecyclerViewAdapter;
     private SuggestedQuestionsRecyclerViewAdapter questionsRecyclerViewAdapter;
     private final static ReservationManager reservationManager = new ReservationManager();
@@ -146,14 +146,14 @@ public class ChatPageActivity extends AppCompatActivity implements ItemSelection
         if (previousResponseId == null || previousResponseId.isEmpty()) {
             // For first-time messages, don't include previousBotResponseId
             params = ResponseCreateParams.builder()
-                    .instructions(Utils.MODEL_CONTEXT + reservationManager.toJson() + "\n" + "\"\n}") // append latest up to date reservations list
+                    .instructions(Utils.getModelContext() + reservationManager.toJson() + "\n" + "\"\n}") // append latest up to date reservations list
                     .input(userPrompt.getMessage())
                     .model(ChatModel.GPT_4_1_2025_04_14)
                     .build();
         } else {
             // For messages in a running conversation, include previousBotResponseId
             params = ResponseCreateParams.builder()
-                    .instructions(Utils.MODEL_CONTEXT + reservationManager.toJson() + "\n" + "\"\n}") // append latest up to date reservations list
+                    .instructions(Utils.getModelContext() + reservationManager.toJson() + "\n" + "\"\n}") // append latest up to date reservations list
                     .previousResponseId(previousResponseId)
                     .input(userPrompt.getMessage())
                     .model(ChatModel.GPT_4_1_2025_04_14)
@@ -307,7 +307,7 @@ public class ChatPageActivity extends AppCompatActivity implements ItemSelection
         chatRecyclerViewAdapter.addItem(userMessage);
 
         // Suggested question recycler view
-        questionsRecyclerView = findViewById(R.id.suggested_questions_recycler_view);
+        RecyclerView questionsRecyclerView = findViewById(R.id.suggested_questions_recycler_view);
         questionsRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         questionsRecyclerViewAdapter = new SuggestedQuestionsRecyclerViewAdapter(this, this);
         questionsRecyclerView.setAdapter(questionsRecyclerViewAdapter);
