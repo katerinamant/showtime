@@ -26,9 +26,13 @@ import com.example.showtime.ChatItem.UserMessage;
 import com.example.showtime.HelpPage.HelpPageActivity;
 import com.example.showtime.LandingPage.LandingPageActivity;
 import com.example.showtime.R;
+import com.example.showtime.RecyclerView.ChatRecyclerViewAdapter;
+import com.example.showtime.RecyclerView.ItemSelectionListener;
+import com.example.showtime.RecyclerView.SuggestedQuestionsRecyclerViewAdapter;
 import com.example.showtime.Reservation.Reservation;
 import com.example.showtime.Reservation.ReservationManager;
 import com.example.showtime.Utils.ResponseJSON;
+import com.example.showtime.Utils.SuggestedQuestion;
 import com.example.showtime.Utils.Utils;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.openai.client.OpenAIClientAsync;
@@ -39,25 +43,28 @@ import com.openai.models.responses.ResponseCreateParams;
 import com.openai.models.responses.ResponseOutputMessage;
 import com.openai.models.responses.ResponseOutputText;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
-public class ChatPageActivity extends AppCompatActivity implements ChatRecyclerViewAdapter.ChatEventListener {
+public class ChatPageActivity extends AppCompatActivity implements ItemSelectionListener {
     private ChatPageViewModel viewModel;
-    private RecyclerView recyclerView;
-    private ChatRecyclerViewAdapter recyclerViewAdapter;
+    private RecyclerView chatRecyclerView;
+    private ChatRecyclerViewAdapter chatRecyclerViewAdapter;
+    private SuggestedQuestionsRecyclerViewAdapter questionsRecyclerViewAdapter;
     private final static ReservationManager reservationManager = new ReservationManager();
 
-    // TODO use Google Secret Manager to fetch API key
     OpenAIClientAsync client = OpenAIOkHttpClientAsync.builder()
             .apiKey("myKey")
             .build();
 
     ChatItem userMessage, botMessage, textMessage, ticketBanner, botImgMessage, rateBanner;
+    List<SuggestedQuestion> questions;
     ImageView sendBtn;
     String userInput;
     String previousResponseId;
+    boolean supportHasJoined = false;
 
 
     @Override
@@ -77,7 +84,7 @@ public class ChatPageActivity extends AppCompatActivity implements ChatRecyclerV
 
         setUpHeaderButtons();
 
-        setUpRecyclerView();
+        setUpRecyclerViews();
 
         // Set up chat input functionality
         // Enable scrolling in the chat input box
@@ -96,19 +103,23 @@ public class ChatPageActivity extends AppCompatActivity implements ChatRecyclerV
             userMessage = viewModel.getPresenter().getNewUserMessage(userInput);
 
             // Add new object to RecyclerView and clear input text
-            addToRecyclerView(userMessage);
+            addToChatRecyclerView(userMessage);
             chatInput.setText("");
 
-            waitForBotMsg((UserMessage) userMessage);
+            // Do not send the mssage to the bot,
+            // if support has joined the chat.
+            if (!supportHasJoined) {
+                waitForBotMsg((UserMessage) userMessage);
+            }
         });
 
         setUpClearChatButton();
     }
 
-    void addToRecyclerView(ChatItem item) {
-        // Add new object to RecyclerView and scroll to bottom
-        recyclerViewAdapter.addItem(item);
-        recyclerView.scrollToPosition(recyclerViewAdapter.getItemCount() - 1);
+    void addToChatRecyclerView(ChatItem item) {
+        // Add new object to chat's RecyclerView and scroll to bottom
+        chatRecyclerViewAdapter.addItem(item);
+        chatRecyclerView.scrollToPosition(chatRecyclerViewAdapter.getItemCount() - 1);
     }
 
     void toggleSendButton(boolean state) {
@@ -118,13 +129,14 @@ public class ChatPageActivity extends AppCompatActivity implements ChatRecyclerV
     }
 
     void waitForBotMsg(UserMessage userPrompt) {
-        // Disable send button
+        // Disable send button and clear suggested questions
         toggleSendButton(false);
+        questionsRecyclerViewAdapter.clearQuestions();
 
         // Have a small delay before showing the "processing..." message
         new Handler().postDelayed(() -> {
             textMessage = viewModel.getPresenter().getNewTextMessage("processing...");
-            addToRecyclerView(textMessage);
+            addToChatRecyclerView(textMessage);
         }, 400);
 
 
@@ -133,14 +145,14 @@ public class ChatPageActivity extends AppCompatActivity implements ChatRecyclerV
         if (previousResponseId == null || previousResponseId.isEmpty()) {
             // For first-time messages, don't include previousBotResponseId
             params = ResponseCreateParams.builder()
-                    .instructions(Utils.MODEL_CONTEXT + reservationManager.toJson() + "\n" + "\"\n}") // append latest up to date reservations list
+                    .instructions(Utils.getModelContext() + reservationManager.toJson() + "\n" + "\"\n}") // append latest up to date reservations list
                     .input(userPrompt.getMessage())
                     .model(ChatModel.GPT_4_1_2025_04_14)
                     .build();
         } else {
             // For messages in a running conversation, include previousBotResponseId
             params = ResponseCreateParams.builder()
-                    .instructions(Utils.MODEL_CONTEXT + reservationManager.toJson() + "\n" + "\"\n}") // append latest up to date reservations list
+                    .instructions(Utils.getModelContext() + reservationManager.toJson() + "\n" + "\"\n}") // append latest up to date reservations list
                     .previousResponseId(previousResponseId)
                     .input(userPrompt.getMessage())
                     .model(ChatModel.GPT_4_1_2025_04_14)
@@ -162,7 +174,6 @@ public class ChatPageActivity extends AppCompatActivity implements ChatRecyclerV
                     throw new RuntimeException("Model response output field is empty: " + response);
                 }
 
-                // TODO don't get the first one rather the one which has the field "type": "output_text"
                 Optional<ResponseOutputMessage> outputMessageJson = response.output().get(0).message();
                 if (!outputMessageJson.isPresent()) {
                     throw new RuntimeException("Model returned no output: " + response);
@@ -187,21 +198,29 @@ public class ChatPageActivity extends AppCompatActivity implements ChatRecyclerV
                 botImgMessage = null;
                 rateBanner = null;
 
-                if (responseJSON.getIntent().isPresent() && responseJSON.getReservation().isPresent()) {
+                if (responseJSON.getIntent().isPresent()) {
                     String intent = responseJSON.getIntent().get().toLowerCase();
-                    Reservation reservation = responseJSON.getReservation().get();
-                    switch (intent) {
-                        case "new":
-                            reservationManager.addReservation(reservation.getReservationCode(), reservation);
-                            ticketBanner = viewModel.getPresenter().getNewTicketBanner(reservation);
-                            break;
-                        case "cancel":
-                            reservationManager.deleteReservation(reservation.getReservationCode());
-                            break;
-                        case "change":
-                            reservationManager.updateReservation(reservation.getReservationCode(), reservation);
-                            ticketBanner = viewModel.getPresenter().getNewTicketBanner(reservation);
-                            break;
+                    // Show help button
+                    if (intent.equals("help")) {
+                        questionsRecyclerViewAdapter.setShowHelpButton(true);
+                    }
+
+                    // Handle reservation related actions
+                    if (responseJSON.getIntent().isPresent() && responseJSON.getReservation().isPresent()) {
+                        Reservation reservation = responseJSON.getReservation().get();
+                        switch (intent) {
+                            case "new":
+                                reservationManager.addReservation(reservation.getReservationCode(), reservation);
+                                ticketBanner = viewModel.getPresenter().getNewTicketBanner(reservation);
+                                break;
+                            case "cancel":
+                                reservationManager.deleteReservation(reservation.getReservationCode());
+                                break;
+                            case "change":
+                                reservationManager.updateReservation(reservation.getReservationCode(), reservation);
+                                ticketBanner = viewModel.getPresenter().getNewTicketBanner(reservation);
+                                break;
+                        }
                     }
                 }
 
@@ -221,27 +240,36 @@ public class ChatPageActivity extends AppCompatActivity implements ChatRecyclerV
                     }
                 }
 
+                // Get suggested questions from the model
+                questions = responseJSON.getSuggestedQuestions();
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                botMessage = viewModel.getPresenter().getNewBotMessage("I didn't quite understand that, can you ask again?");
+                questions = new ArrayList<>();
+            } finally {
+                // Update chat
                 mainHandler.post(() -> {
                     // Deletes "processing..." message
-                    recyclerViewAdapter.deleteLastItem();
+                    chatRecyclerViewAdapter.deleteLastItem();
 
-                    addToRecyclerView(botMessage);
+                    addToChatRecyclerView(botMessage);
                     if (ticketBanner != null) {
-                        addToRecyclerView(ticketBanner);
+                        addToChatRecyclerView(ticketBanner);
                     }
                     if (botImgMessage != null) {
-                        addToRecyclerView(botImgMessage);
+                        addToChatRecyclerView(botImgMessage);
                     }
                     if (rateBanner != null) {
-                        addToRecyclerView(rateBanner);
+                        addToChatRecyclerView(rateBanner);
                     }
 
                     // Enable send button
                     toggleSendButton(true);
+
+                    // Show new suggested questions
+                    questionsRecyclerViewAdapter.setQuestions(questions);
                 });
-            } catch (Exception e) {
-                e.printStackTrace();
-                botMessage = viewModel.getPresenter().getNewBotMessage("I didn't quite understand that, can you ask again?");
             }
         });
     }
@@ -264,17 +292,25 @@ public class ChatPageActivity extends AppCompatActivity implements ChatRecyclerV
         });
     }
 
-    void setUpRecyclerView() {
-        recyclerView = findViewById(R.id.chat_page_recycler_view);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerViewAdapter = new ChatRecyclerViewAdapter(this, this);
-        recyclerView.setAdapter(recyclerViewAdapter);
+    void setUpRecyclerViews() {
+        // Chat recycler view
+        chatRecyclerView = findViewById(R.id.chat_page_recycler_view);
+        chatRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        chatRecyclerViewAdapter = new ChatRecyclerViewAdapter(this, this);
+        chatRecyclerView.setAdapter(chatRecyclerViewAdapter);
 
         // Add user's first message from the LandingPage
         previousResponseId = null; // Ensure that chatbot does not remember previous conversation
         userMessage = viewModel.getPresenter().getNewUserMessage(userInput);
-        recyclerViewAdapter.addItem(userMessage);
+        chatRecyclerViewAdapter.addItem(userMessage);
 
+        // Suggested question recycler view
+        RecyclerView questionsRecyclerView = findViewById(R.id.suggested_questions_recycler_view);
+        questionsRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        questionsRecyclerViewAdapter = new SuggestedQuestionsRecyclerViewAdapter(this, this);
+        questionsRecyclerView.setAdapter(questionsRecyclerViewAdapter);
+
+        // After set-up, generate response to user's first question
         waitForBotMsg((UserMessage) userMessage);
     }
 
@@ -282,7 +318,7 @@ public class ChatPageActivity extends AppCompatActivity implements ChatRecyclerV
         // Show popup when clear chat button is clicked
         ImageView clearChatBtn = findViewById(R.id.clear_chat_button);
         clearChatBtn.setOnClickListener(v -> {
-            if (recyclerViewAdapter.getItemCount() == 0) return;
+            if (chatRecyclerViewAdapter.getItemCount() == 0) return;
 
             // Inflate the custom layout
             LayoutInflater inflater = LayoutInflater.from(this);
@@ -301,8 +337,9 @@ public class ChatPageActivity extends AppCompatActivity implements ChatRecyclerV
             cancelButton.setOnClickListener(cancel -> dialog.dismiss());
 
             confirmButton.setOnClickListener(confirm -> {
-                recyclerViewAdapter.clearChat();
+                chatRecyclerViewAdapter.clearChat();
                 previousResponseId = null; // Ensure that chatbot does not remember previous conversation
+                supportHasJoined = false;
                 dialog.dismiss();
             });
 
@@ -322,7 +359,7 @@ public class ChatPageActivity extends AppCompatActivity implements ChatRecyclerV
     public void onRating(RatingBar ratingBar, String showName, int rating) {
         @SuppressLint("DefaultLocale") String rating_text = String.format("%d.0 / 5.0", rating);
         // Show popup when rating is selected
-        if (recyclerViewAdapter.getItemCount() == 0) return;
+        if (chatRecyclerViewAdapter.getItemCount() == 0) return;
 
         // Inflate the custom layout
         LayoutInflater inflater = LayoutInflater.from(this);
@@ -349,7 +386,7 @@ public class ChatPageActivity extends AppCompatActivity implements ChatRecyclerV
         confirmButton.setOnClickListener(confirm -> {
             // Show the rating as a user message for UsherBot to respond
             userMessage = viewModel.getPresenter().getNewUserMessage(rating_text);
-            addToRecyclerView(userMessage);
+            addToChatRecyclerView(userMessage);
             waitForBotMsg((UserMessage) userMessage);
 
             // Disable rating bar after confirmed rating
@@ -365,5 +402,49 @@ public class ChatPageActivity extends AppCompatActivity implements ChatRecyclerV
         if (window != null) {
             window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         }
+    }
+
+    @Override
+    public void onSuggestedQuestionClick(SuggestedQuestion suggestedQuestion) {
+        if (suggestedQuestion.getQuestion().isEmpty()) return;
+
+        // Create userMessage object
+        userInput = suggestedQuestion.getQuestion().trim();
+        userMessage = viewModel.getPresenter().getNewUserMessage(userInput);
+
+        // Add new object to RecyclerView
+        addToChatRecyclerView(userMessage);
+
+        waitForBotMsg((UserMessage) userMessage);
+    }
+
+    @Override
+    public void onHelpButtonClick() {
+        // Show a "processing..." message with a small delay
+        new Handler().postDelayed(() -> {
+            questionsRecyclerViewAdapter.clearQuestions();
+            textMessage = viewModel.getPresenter().getNewTextMessage("processing...");
+            addToChatRecyclerView(textMessage);
+
+            // Have a longer delay before showing the John text
+            // (total delay is 3400 with the processing message delay)
+            new Handler().postDelayed(() -> {
+                chatRecyclerViewAdapter.deleteLastItem();
+
+                String text = "**John** has joined the chat";
+                textMessage = viewModel.getPresenter().getNewTextMessage(text);
+                addToChatRecyclerView(textMessage);
+
+                // Have another small delay before showing a default bot message
+                new Handler().postDelayed(() -> {
+                    botMessage = viewModel.getPresenter().getNewBotMessage(
+                            "Feel free to continue explaining your request—they can see everything we’ve already discussed and will get you squared away!"
+                    );
+                    addToChatRecyclerView(botMessage);
+                    supportHasJoined = true;
+                }, 400);
+
+            }, 3000);
+        }, 400);
     }
 }

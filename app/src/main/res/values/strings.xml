@@ -12,9 +12,9 @@
     <string name="booth_img_desc">Ticket booth with ShowTime logo</string>
     <string name="how_can_i_help_you">How can I help you?</string>
     <string name="prompt_1">What can you do?</string>
-    <string name="prompt_2">What are the available shows?</string>
+    <string name="prompt_2">Details and timetable of shows</string>
     <string name="prompt_3">I need help with my reservation</string>
-    <string name="prompt_4">How much does a ticket cost?</string>
+    <string name="prompt_4">Seating options and prices</string>
 
     <!-- Header -->
     <string name="logo_desc">ShowTime logo</string>
@@ -26,6 +26,7 @@
     <string name="clear_chat_desc">Wipes the chat clean, but don’t worry — your reservations and other actions are safe.</string>
     <string name="confirm_rating_title">Confirm rating?</string>
     <string name="rating_title">You rated</string>
+    <string name="bubble_desc">typing bubble…</string>
 
     <!-- Banners -->
     <string name="res_code">Reservation Code</string>
@@ -35,6 +36,7 @@
     <string name="res_name">Reservation Name</string>
     <string name="amount_title">Outstanding amount:</string>
     <string name="amount">amount</string>
+    <string name="connect_me_to_support">Connect me to a support expert</string>
 
     <!-- Help Page -->
     <string name="call_center_title">Call Center</string>

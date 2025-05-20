@@ -1,6 +1,12 @@
-package com.example.showtime.ChatPage;
+package com.example.showtime.RecyclerView;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Typeface;
+import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.style.StyleSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,14 +31,16 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ChatRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private final List<ChatItem> chatItems = new ArrayList<>();
     private final Context context;
-    private final ChatEventListener listener;
+    private final ItemSelectionListener listener;
 
-    public ChatRecyclerViewAdapter(Context context, ChatEventListener listener) {
+    public ChatRecyclerViewAdapter(Context context, ItemSelectionListener listener) {
         this.context = context;
         this.listener = listener;
     }
@@ -120,9 +128,38 @@ public class ChatRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
     }
 
     // Clear messages list
+    @SuppressLint("NotifyDataSetChanged")
     public void clearChat() {
         chatItems.clear();
         notifyDataSetChanged();
+    }
+
+    private static SpannableStringBuilder formatMarkdown(String msg) {
+        SpannableStringBuilder builder = new SpannableStringBuilder();
+
+        Pattern pattern = Pattern.compile("(\\*\\*[^*]+\\*\\*|\\*[^*]+\\*)");
+        Matcher matcher = pattern.matcher(msg);
+
+        int lastEnd = 0;
+        while (matcher.find()) {
+            // Add plain text before the matched part
+            builder.append(msg.substring(lastEnd, matcher.start()));
+
+            String match = matcher.group();
+            boolean isBold = match.startsWith("**");
+
+            String innerText = match.substring(isBold ? 2 : 1, match.length() - (isBold ? 2 : 1));
+            SpannableString span = new SpannableString(innerText);
+            span.setSpan(new StyleSpan(isBold ? Typeface.BOLD : Typeface.ITALIC), 0, innerText.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+            builder.append(span);
+
+            lastEnd = matcher.end();
+        }
+
+        // Append remaining text
+        builder.append(msg.substring(lastEnd));
+        return builder;
     }
 
     // --- ViewHolder classes ---
@@ -149,7 +186,7 @@ public class ChatRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
         }
 
         public void bind(BotMessage msg) {
-            textView.setText(msg.getMessage());
+            textView.setText(formatMarkdown(msg.getMessage()));
         }
     }
 
@@ -162,7 +199,7 @@ public class ChatRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
         }
 
         public void bind(TextMessage msg) {
-            textView.setText(msg.getMessage());
+            textView.setText(formatMarkdown(msg.getMessage()));
         }
     }
 
@@ -203,6 +240,8 @@ public class ChatRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
 
         public void bind(BotImageMessage botImageMessage) {
             img.setImageResource(botImageMessage.getResourceId());
+
+            // Show image popup when clicked
             img.setOnClickListener(v -> {
                 // Enlarge image from bot message when pressed
                 LayoutInflater inflater = LayoutInflater.from(context);
@@ -223,11 +262,11 @@ public class ChatRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
     }
 
     static class RateBannerViewHolder extends RecyclerView.ViewHolder {
-        private final ChatEventListener listener;
+        private final ItemSelectionListener listener;
         private final TextView showName, date, time;
         public final RatingBar ratingBar;
 
-        public RateBannerViewHolder(@NonNull View itemView, ChatEventListener listener) {
+        public RateBannerViewHolder(@NonNull View itemView, ItemSelectionListener listener) {
             super(itemView);
             this.listener = listener;
 
@@ -248,12 +287,5 @@ public class ChatRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
                     listener.onRating(ratingBar, reservation.getShowName(), (int) rating)
             );
         }
-    }
-
-    /**
-     * Define an interface in order to pass events to the ChatPageActivity.
-     */
-    public interface ChatEventListener {
-        void onRating(RatingBar ratingBar, String showName, int rating);
     }
 }

@@ -46,4 +46,5 @@ dependencies {
 
     implementation("com.fasterxml.jackson.core:jackson-core:2.18.2")
     implementation("com.openai:openai-java:1.5.1")
+    implementation("io.noties.markwon:core:4.6.2")
 }

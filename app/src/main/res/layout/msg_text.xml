@@ -9,7 +9,7 @@
         android:id="@+id/msg_textview"
         android:layout_width="240dp"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/inter_extrabold"
+        android:fontFamily="@font/inter_regular"
         android:text="@string/na"
         android:textAlignment="center"
         android:textColor="@color/hint"
