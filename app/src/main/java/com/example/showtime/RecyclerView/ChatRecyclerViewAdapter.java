@@ -284,7 +284,7 @@ public class ChatRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
             time.setText(reservation.getTime());
 
             ratingBar.setOnRatingBarChangeListener((ratingBar, rating, fromUser) ->
-                    listener.onRating(ratingBar, reservation.getShowName(), (int) rating)
+                    listener.onRating(ratingBar, reservation, (int) rating)
             );
         }
     }

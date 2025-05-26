@@ -375,7 +375,7 @@ public class ChatPageActivity extends AppCompatActivity implements ItemSelection
 
     // ItemSelectionListener implementation
     @Override
-    public void onRating(RatingBar ratingBar, String showName, int rating) {
+    public void onRating(RatingBar ratingBar, Reservation reservation, int rating) {
         @SuppressLint("DefaultLocale") String rating_text = String.format("%d.0 / 5.0", rating);
         // Show popup when rating is selected
         if (chatRecyclerViewAdapter.getItemCount() == 0) return;
@@ -392,7 +392,7 @@ public class ChatPageActivity extends AppCompatActivity implements ItemSelection
 
         // Set up text
         TextView showNameTxt = popupView.findViewById(R.id.rating_showName);
-        showNameTxt.setText(showName);
+        showNameTxt.setText(reservation.getShowName());
         TextView ratingTxt = popupView.findViewById(R.id.rating_score);
         ratingTxt.setText(rating_text);
 
@@ -411,6 +411,9 @@ public class ChatPageActivity extends AppCompatActivity implements ItemSelection
             // Disable rating bar after confirmed rating
             ratingBar.setIsIndicator(true);
             dialog.dismiss();
+
+            // Delete reservation after rating
+            reservationManager.deleteReservation(reservation.getReservationCode());
         });
 
         // Show the dialog
