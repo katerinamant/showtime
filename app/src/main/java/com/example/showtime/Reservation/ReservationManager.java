@@ -8,6 +8,10 @@ import java.util.HashMap;
 public class ReservationManager {
     private final HashMap<String, Reservation> reservations = new HashMap<>();
 
+    public HashMap<String, Reservation> getAllReservations() {
+        return reservations;
+    }
+
     public Reservation getReservation(String reservationCode) {
         return reservations.get(reservationCode);
     }

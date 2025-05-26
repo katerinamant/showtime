@@ -31,6 +31,8 @@ import com.example.showtime.RecyclerView.ItemSelectionListener;
 import com.example.showtime.RecyclerView.SuggestedQuestionsRecyclerViewAdapter;
 import com.example.showtime.Reservation.Reservation;
 import com.example.showtime.Reservation.ReservationManager;
+import com.example.showtime.Reservation.Section;
+import com.example.showtime.Reservation.Show;
 import com.example.showtime.Utils.ResponseJSON;
 import com.example.showtime.Utils.SuggestedQuestion;
 import com.example.showtime.Utils.Utils;
@@ -71,6 +73,23 @@ public class ChatPageActivity extends AppCompatActivity implements ItemSelection
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat_page);
+
+        // Set up dummy reservations
+        if (reservationManager.getAllReservations().isEmpty()) {
+            // Set up a past reservation
+            String code = "E000";
+            String phoneNumber = "6911111111";
+            String name = "User Name";
+            String date = "05/05/2025";
+            Reservation reservation = new Reservation(code, phoneNumber, name, Show.PETER_PAN, date, true, 2, Section.RED);
+            reservationManager.addReservation(code, reservation);
+
+            // Set up an upcoming reservation
+            code = "E001";
+            date = "23/07/2025";
+            reservation = new Reservation(code, phoneNumber, name, Show.PETER_PAN, date, true, 2, Section.RED);
+            reservationManager.addReservation(code, reservation);
+        }
 
         sendBtn = findViewById(R.id.send_button);
 
