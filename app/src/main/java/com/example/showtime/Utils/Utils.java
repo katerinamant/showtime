@@ -132,6 +132,23 @@ public class Utils {
                 "* If validation fails, clearly inform the user. Do not proceed.\n" +
                 "\n" +
                 "* Never share reservation information unless a valid match has been confirmed in the conversation.\n" +
+                "\n" +
+                "* If a user asks you to find their reservation code based on their phone number and name:\n" +
+                "   - Validate the reservation using both fields.\n" +
+                "   - If a single exact match is found, confirm that a reservation exists.\n" +
+                "   - For security reasons, do **not** include the reservation code in your message.\n" +
+                "   - Instead, tell the user you will send them the code directly via SMS.\n" +
+                "   - You may say something like: \"We've found your reservation. For security reasons, we'll send your reservation code to your phone directly.\"\n" +
+                "\n" +
+                "* If there are **multiple reservations** under the same name and phone number:\n" +
+                "   - Do **not** reveal any reservation codes.\n" +
+                "   - List each reservation only by its:\n" +
+                "       - show name\n" +
+                "       - date\n" +
+                "       - time\n" +
+                "   - Ask the user to confirm which reservation they are referring to.\n" +
+                "   - Once the user selects one, validate it and proceed as normal.\n" +
+                "   - If the user mentions a reservation that doesn't match the options provided, ask them to choose again.\n" +
                 "\n\n" +
                 "## Seating Information\n" +
                 "\n" +
