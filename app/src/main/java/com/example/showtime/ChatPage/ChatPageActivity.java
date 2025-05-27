@@ -125,7 +125,7 @@ public class ChatPageActivity extends AppCompatActivity implements ItemSelection
             addToChatRecyclerView(userMessage);
             chatInput.setText("");
 
-            // Do not send the mssage to the bot,
+            // Do not send the message to the bot,
             // if support has joined the chat.
             if (!supportHasJoined) {
                 waitForBotMsg((UserMessage) userMessage);
@@ -281,10 +281,17 @@ public class ChatPageActivity extends AppCompatActivity implements ItemSelection
                     }
                     if (rateBanner != null) {
                         addToChatRecyclerView(rateBanner);
+
+                        // Do not allow the user to send any new messages,
+                        // they can only submit the rating
+                        questions = new ArrayList<>();
+                        toggleSendButton(false);
                     }
 
-                    // Enable send button
-                    toggleSendButton(true);
+                    if (rateBanner == null) {
+                        // Enable send button
+                        toggleSendButton(true);
+                    }
 
                     // Show new suggested questions
                     questionsRecyclerViewAdapter.setQuestions(questions);
@@ -359,6 +366,7 @@ public class ChatPageActivity extends AppCompatActivity implements ItemSelection
                 chatRecyclerViewAdapter.clearChat();
                 previousResponseId = null; // Ensure that chatbot does not remember previous conversation
                 supportHasJoined = false;
+                questionsRecyclerViewAdapter.clearQuestions();
                 dialog.dismiss();
             });
 
