@@ -244,11 +244,9 @@ public class Utils {
                 "A: Try rephrasing your request or use some of the suggested commands. If you’re still stuck, you can request a human agent.\n" +
                 "\n" +
                 "Q: How do I speak to a real person?\n" +
-                "A: Ask UsherBot to connect you to a support agent (*).\n" +
+                "A: Ask UsherBot to connect you to a support agent, available 24/7.\n" +
                 "\n" +
-                "You can also call our support line at 210-0000000 (*).\n" +
-                "\n" +
-                "    Working hours: MON-FRI 8:00-20:00\n" +
+                "You can also call our support line at 210-0000000, available 24/7.\n" +
                 "\n" +
                 "Q: What if I have a more complex request?\n" +
                 "A: If UsherBot can’t handle your specific needs (e.g., large group bookings, special accommodations), it will offer to transfer you to a human agent or provide our support line. We’re here to help!\n" +

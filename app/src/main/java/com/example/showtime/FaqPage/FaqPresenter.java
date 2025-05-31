@@ -138,9 +138,8 @@ public class FaqPresenter {
 
                 faq = new Faq();
                 faq.setQuestion("How do I speak to a real person?");
-                faq.setAnswer("Ask UsherBot to connect you to a support agent (*).\n\n" +
-                        "You can also call our support line at 210-0000000 (*).\n\n" +
-                        "* Working hours: MON-FRI 8:00-20:00");
+                faq.setAnswer("Ask UsherBot to connect you to a support agent, available 24/7.\n\n" +
+                        "You can also call our support line at 210-0000000, available 24/7.");
                 res.add(faq);
 
                 faq = new Faq();
