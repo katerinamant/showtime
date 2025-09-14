@@ -34,6 +34,12 @@ Inject your key programmatically in the OpenAI client setup in `ChatPageActivity
 
 Watch the [video demo](https://www.loom.com/share/3626c753e3364b008128fa93cace793b)!
 
+## Screenshots
+
+<img src="https://github.com/user-attachments/assets/987693ce-5ef6-486e-ad5d-097dab7338ca" width="400" height="900">
+
+<img src="https://github.com/user-attachments/assets/3366e6c1-e156-4068-ba3d-792cec056e58" width="400" height="900">
+
 ## Authors
 
 Created by Alex Papadopoulos and Katerina Mantaraki for 🎓
